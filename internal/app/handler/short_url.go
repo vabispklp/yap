@@ -57,8 +57,8 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.urlsMap[resultPath] = stringURL
 		mu.Unlock()
 
-		w.Write([]byte(resultURL))
 		w.WriteHeader(http.StatusCreated)
+		w.Write([]byte(resultURL))
 	case http.MethodGet:
 		requestURI := r.URL.RequestURI()
 		if requestURI == "" {
