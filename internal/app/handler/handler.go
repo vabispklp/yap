@@ -7,16 +7,16 @@ import (
 )
 
 type Handler struct {
-	storage Repository
+	storage Storage
 }
 
-func New(storage Repository) *Handler {
+func New(storage Storage) *Handler {
 	return &Handler{
 		storage: storage,
 	}
 }
 
-type Repository interface {
+type Storage interface {
 	GetRedirectLink(ctx context.Context, path string) (*model.ShortURL, error)
 	AddRedirectLink(ctx context.Context, shortURL *model.ShortURL) error
 }

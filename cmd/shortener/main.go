@@ -4,17 +4,23 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
+
 	"github.com/vabispklp/yap/internal/app/handler"
 	"github.com/vabispklp/yap/internal/app/storage"
 )
 
 func main() {
 	server := http.Server{Addr: "localhost:8080"}
-	mux := http.NewServeMux()
 
-	mux.Handle("/", handler.New(storage.New()))
+	r := chi.NewRouter()
 
-	server.Handler = mux
+	h := handler.New(storage.New())
+
+	r.Get("/{path}", h.ServeHTTP)
+	r.Post("/", h.ServeHTTP)
+
+	server.Handler = r
 
 	log.Fatal(server.ListenAndServe())
 }
