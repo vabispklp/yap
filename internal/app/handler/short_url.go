@@ -8,7 +8,8 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"sync"
+
+	"github.com/vabispklp/yap/internal/app/model"
 )
 
 const (
@@ -16,6 +17,8 @@ const (
 )
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
 	switch r.Method {
 	case http.MethodPost:
 		if r.Body == nil {
@@ -52,10 +55,15 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		resultURL := fmt.Sprintf(resultURLPattern, resultPath)
 
-		mu := sync.Mutex{}
-		mu.Lock()
-		h.urlsMap[resultPath] = stringURL
-		mu.Unlock()
+		err = h.storage.AddRedirectLink(ctx, &model.ShortURL{
+			Path:        resultPath,
+			OriginalURL: stringURL,
+		})
+		if err != nil {
+			http.Error(w, `Internal error`, http.StatusInternalServerError)
+
+			return
+		}
 
 		w.WriteHeader(http.StatusCreated)
 		w.Write([]byte(resultURL))
@@ -67,15 +75,14 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		a := strings.TrimLeft(requestURI, "/")
-		originalURL, ok := h.urlsMap[a]
-		if !ok {
+		shortURL, err := h.storage.GetRedirectLink(ctx, strings.TrimLeft(requestURI, "/"))
+		if err != nil {
 			http.NotFound(w, r)
 
 			return
 		}
 
-		http.Redirect(w, r, originalURL, http.StatusTemporaryRedirect)
+		http.Redirect(w, r, shortURL.OriginalURL, http.StatusTemporaryRedirect)
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
