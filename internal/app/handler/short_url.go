@@ -68,14 +68,14 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
 		w.Write([]byte(resultURL))
 	case http.MethodGet:
-		requestURI := r.URL.RequestURI()
-		if requestURI == "" {
+		path := r.URL.RequestURI()
+		if path == "" {
 			http.Error(w, `Empty path`, http.StatusBadRequest)
 
 			return
 		}
 
-		shortURL, err := h.storage.GetRedirectLink(ctx, strings.TrimLeft(requestURI, "/"))
+		shortURL, err := h.storage.GetRedirectLink(ctx, strings.TrimLeft(path, "/"))
 		if err != nil {
 			http.NotFound(w, r)
 

@@ -9,7 +9,7 @@ import (
 	"github.com/vabispklp/yap/internal/app/model"
 )
 
-func TestRepository_GetRedirectLink(t *testing.T) {
+func TestStorage_GetRedirectLink(t *testing.T) {
 	var urlsMap = map[string]*model.ShortURL{
 		"path": {
 			Path:        "path",
@@ -44,7 +44,7 @@ func TestRepository_GetRedirectLink(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := &Repository{
+			r := &Storage{
 				urlsMap: urlsMap,
 			}
 			result, err := r.GetRedirectLink(tt.args.ctx, tt.args.path)
@@ -55,7 +55,7 @@ func TestRepository_GetRedirectLink(t *testing.T) {
 	}
 }
 
-func TestRepository_AddRedirectLink(t *testing.T) {
+func TestStorage_AddRedirectLink(t *testing.T) {
 	type fields struct {
 		urlsMap map[string]*model.ShortURL
 	}
@@ -83,7 +83,7 @@ func TestRepository_AddRedirectLink(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := &Repository{
+			r := &Storage{
 				urlsMap: tt.fields.urlsMap,
 			}
 			err := r.AddRedirectLink(tt.args.ctx, tt.args.shortURL)
