@@ -1,4 +1,4 @@
-package storage
+package inmem
 
 import (
 	"context"
@@ -11,14 +11,14 @@ import (
 
 func TestStorage_GetRedirectLink(t *testing.T) {
 	var urlsMap = map[string]*model.ShortURL{
-		"path": {
-			Path:        "path",
+		"some_id": {
+			ID:          "some_id",
 			OriginalURL: "originalURL",
 		},
 	}
 	type args struct {
-		ctx  context.Context
-		path string
+		ctx context.Context
+		id  string
 	}
 	tests := []struct {
 		name           string
@@ -28,18 +28,18 @@ func TestStorage_GetRedirectLink(t *testing.T) {
 	}{
 		{
 			name: "успешное получение короткой ссылки",
-			args: args{path: "path"},
+			args: args{id: "some_id"},
 			expectedResult: &model.ShortURL{
-				Path:        "path",
+				ID:          "some_id",
 				OriginalURL: "originalURL",
 			},
 			expectedErr: nil,
 		},
 		{
 			name:           "короткая ссылка на найдена",
-			args:           args{path: "path 1"},
+			args:           args{id: "some_id_2"},
 			expectedResult: nil,
-			expectedErr:    errNotFound,
+			expectedErr:    nil,
 		},
 	}
 	for _, tt := range tests {
@@ -47,7 +47,7 @@ func TestStorage_GetRedirectLink(t *testing.T) {
 			r := &Storage{
 				urlsMap: urlsMap,
 			}
-			result, err := r.GetRedirectLink(tt.args.ctx, tt.args.path)
+			result, err := r.GetRedirectLink(tt.args.ctx, tt.args.id)
 
 			assert.Equal(t, tt.expectedErr, err, "Unexpected error")
 			assert.Equal(t, tt.expectedResult, result, "Unexpected result")
@@ -74,7 +74,7 @@ func TestStorage_AddRedirectLink(t *testing.T) {
 			fields: fields{urlsMap: map[string]*model.ShortURL{}},
 			args: args{
 				shortURL: &model.ShortURL{
-					Path:        "path",
+					ID:          "some_id",
 					OriginalURL: "originalURL",
 				},
 			},

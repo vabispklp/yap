@@ -1,6 +1,6 @@
 package model
 
 type ShortURL struct {
-	Path        string
+	ID          string
 	OriginalURL string
 }

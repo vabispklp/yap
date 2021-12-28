@@ -1,26 +1,42 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
-
-	"github.com/go-chi/chi/v5"
-
-	"github.com/vabispklp/yap/internal/app/handler"
-	"github.com/vabispklp/yap/internal/app/storage"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 )
 
 func main() {
 	server := http.Server{Addr: "localhost:8080"}
+	router, err := initRouter()
+	if err != nil {
+		log.Fatalf("create router error: %s", err)
+	}
 
-	r := chi.NewRouter()
+	server.Handler = router
 
-	h := handler.New(storage.New())
+	done := make(chan os.Signal, 1)
+	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
-	r.Get("/{path}", h.ServeHTTP)
-	r.Post("/", h.ServeHTTP)
+	go func() {
+		log.Print(server.ListenAndServe())
+	}()
+	log.Print("Server Started")
 
-	server.Handler = r
+	<-done
+	log.Print("Graceful shutdown Started")
+	log.Print("Server Stopped")
 
-	log.Fatal(server.ListenAndServe())
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err = server.Shutdown(ctx); err != nil {
+		log.Fatal(err)
+	}
+
+	log.Print("Graceful shutdown Finished")
 }
