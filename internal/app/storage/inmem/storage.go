@@ -9,12 +9,12 @@ import (
 
 type Storage struct {
 	mu      sync.Mutex
-	urlsMap map[string]*model.ShortURL
+	urlsMap map[string]model.ShortURL
 }
 
 func New() *Storage {
 	return &Storage{
-		urlsMap: make(map[string]*model.ShortURL),
+		urlsMap: make(map[string]model.ShortURL),
 	}
 }
 
@@ -24,10 +24,10 @@ func (s *Storage) GetRedirectLink(ctx context.Context, id string) (*model.ShortU
 		return nil, nil
 	}
 
-	return shortURL, nil
+	return &shortURL, nil
 }
 
-func (s *Storage) AddRedirectLink(ctx context.Context, shortURL *model.ShortURL) error {
+func (s *Storage) AddRedirectLink(ctx context.Context, shortURL model.ShortURL) error {
 	s.mu.Lock()
 	s.urlsMap[shortURL.ID] = shortURL
 	s.mu.Unlock()

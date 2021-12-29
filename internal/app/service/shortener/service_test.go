@@ -63,14 +63,14 @@ func TestShortener_GetRedirectLink(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			shortenerMock := storageMock.NewMockShortenerExpected(ctrl)
+			storageMock := storageMock.NewMockStorageExpected(ctrl)
 
-			shortenerMock.EXPECT().
+			storageMock.EXPECT().
 				GetRedirectLink(gomock.Any(), gomock.Any()).
 				Return(tt.getStorageResult.shortURL, tt.getStorageResult.err)
 
 			s := &Shortener{
-				storage: shortenerMock,
+				storage: storageMock,
 			}
 			result, err := s.GetRedirectLink(tt.args.ctx, tt.args.id)
 
@@ -106,13 +106,13 @@ func TestShortener_AddRedirectLink(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			shortenerMock := storageMock.NewMockShortenerExpected(ctrl)
-			shortenerMock.EXPECT().
+			storageMock := storageMock.NewMockStorageExpected(ctrl)
+			storageMock.EXPECT().
 				AddRedirectLink(gomock.Any(), gomock.Any()).
 				Return(tt.addStorageResult)
 
 			s := &Shortener{
-				storage: shortenerMock,
+				storage: storageMock,
 			}
 			result, err := s.AddRedirectLink(tt.args.ctx, tt.args.stringURL)
 

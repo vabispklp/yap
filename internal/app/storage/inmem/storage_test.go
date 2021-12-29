@@ -10,7 +10,7 @@ import (
 )
 
 func TestStorage_GetRedirectLink(t *testing.T) {
-	var urlsMap = map[string]*model.ShortURL{
+	var urlsMap = map[string]model.ShortURL{
 		"some_id": {
 			ID:          "some_id",
 			OriginalURL: "originalURL",
@@ -57,11 +57,11 @@ func TestStorage_GetRedirectLink(t *testing.T) {
 
 func TestStorage_AddRedirectLink(t *testing.T) {
 	type fields struct {
-		urlsMap map[string]*model.ShortURL
+		urlsMap map[string]model.ShortURL
 	}
 	type args struct {
 		ctx      context.Context
-		shortURL *model.ShortURL
+		shortURL model.ShortURL
 	}
 	tests := []struct {
 		name        string
@@ -71,9 +71,9 @@ func TestStorage_AddRedirectLink(t *testing.T) {
 	}{
 		{
 			name:   "успешное сохранение короткой ссылки",
-			fields: fields{urlsMap: map[string]*model.ShortURL{}},
+			fields: fields{urlsMap: map[string]model.ShortURL{}},
 			args: args{
-				shortURL: &model.ShortURL{
+				shortURL: model.ShortURL{
 					ID:          "some_id",
 					OriginalURL: "originalURL",
 				},

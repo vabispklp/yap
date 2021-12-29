@@ -1,23 +1,20 @@
 package handlers
 
 import (
-	"io/ioutil"
+	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
+	shortenerMock "github.com/vabispklp/yap/api/rest/handlers/mock"
+	"github.com/vabispklp/yap/internal/app/model"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
-
-	"github.com/golang/mock/gomock"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-
-	shortenerMock "github.com/vabispklp/yap/cmd/shortener/handlers/mock"
 )
 
-func TestHandler_AddURL(t *testing.T) {
-	type addServiceResult struct {
-		url string
-		err error
+func TestHandler_GetURL(t *testing.T) {
+	type getServiceResult struct {
+		shortURL *model.ShortURL
+		err      error
 	}
 	type args struct {
 		method string
@@ -29,23 +26,25 @@ func TestHandler_AddURL(t *testing.T) {
 	}
 	var tests = []struct {
 		name             string
-		addStorageResult addServiceResult
+		getServiceResult getServiceResult
 		args             args
 		want             want
 	}{
 		{
-			name: "успешное добавление короткой ссылки",
-			addStorageResult: addServiceResult{
-				url: "http://localhost:8080/short",
+			name: "успешный редирект по короткой ссылке",
+			getServiceResult: getServiceResult{
+				shortURL: &model.ShortURL{
+					ID:          "some_id",
+					OriginalURL: "https://google.com",
+				},
 				err: nil,
 			},
 			args: args{
-				method: http.MethodPost,
-				id:     "/",
-				url:    "http://localhost:8080/some_id",
+				method: http.MethodGet,
+				id:     "/some_id",
 			},
 			want: want{
-				statusCode: http.StatusCreated,
+				statusCode: http.StatusTemporaryRedirect,
 			},
 		},
 	}
@@ -53,6 +52,7 @@ func TestHandler_AddURL(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
+
 			request := httptest.NewRequest(tt.args.method, tt.args.id, strings.NewReader(tt.args.url))
 
 			w := httptest.NewRecorder()
@@ -60,20 +60,17 @@ func TestHandler_AddURL(t *testing.T) {
 			shortenerServiceMock := shortenerMock.NewMockShortenerExpected(ctrl)
 
 			shortenerServiceMock.EXPECT().
-				AddRedirectLink(gomock.Any(), gomock.Any()).
-				Return(tt.addStorageResult.url, tt.addStorageResult.err)
+				GetRedirectLink(gomock.Any(), gomock.Any()).
+				Return(tt.getServiceResult.shortURL, tt.getServiceResult.err)
 
 			h := Handler{service: shortenerServiceMock}
 
-			h.GetHandlerAddURL()(w, request)
+			h.GetHandleGetURL()(w, request)
 
 			res := w.Result()
 			defer res.Body.Close()
-			result, err := ioutil.ReadAll(res.Body)
 
-			require.Nil(t, err, "decode error not nil")
 			assert.Equal(t, res.StatusCode, tt.want.statusCode, "Unexpected status code")
-			assert.NotEqual(t, string(result), "", "Unexpected result")
 		})
 	}
 }

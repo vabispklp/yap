@@ -15,10 +15,10 @@ const (
 )
 
 type Shortener struct {
-	storage storage.ShortenerExpected
+	storage storage.StorageExpected
 }
 
-func NewShortener(storage storage.ShortenerExpected) (*Shortener, error) {
+func NewShortener(storage storage.StorageExpected) (*Shortener, error) {
 	if storage == nil {
 		return nil, ErrNilPointerStorage
 	}
@@ -47,7 +47,7 @@ func (s *Shortener) AddRedirectLink(ctx context.Context, stringURL string) (stri
 
 	resultURL := fmt.Sprintf(resultURLPattern, resultPath)
 
-	err := s.storage.AddRedirectLink(ctx, &model.ShortURL{
+	err := s.storage.AddRedirectLink(ctx, model.ShortURL{
 		ID:          resultPath,
 		OriginalURL: stringURL,
 	})

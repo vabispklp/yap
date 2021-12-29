@@ -1,9 +1,9 @@
-package main
+package rest
 
 import (
 	"github.com/go-chi/chi/v5"
+	"github.com/vabispklp/yap/api/rest/handlers"
 
-	"github.com/vabispklp/yap/cmd/shortener/handlers"
 	"github.com/vabispklp/yap/internal/app/service/shortener"
 	"github.com/vabispklp/yap/internal/app/storage/inmem"
 )
