@@ -2,17 +2,18 @@ package rest
 
 import (
 	"github.com/go-chi/chi/v5"
-	"github.com/vabispklp/yap/api/rest/handlers"
 
+	"github.com/vabispklp/yap/api/rest/handlers"
 	"github.com/vabispklp/yap/internal/app/service/shortener"
 	"github.com/vabispklp/yap/internal/app/storage/inmem"
+	"github.com/vabispklp/yap/internal/config"
 )
 
-func initRouter() (*chi.Mux, error) {
+func initRouter(cfg config.ConfigExpected) (*chi.Mux, error) {
 	router := chi.NewRouter()
 
 	storage := inmem.New()
-	shortenerService, err := shortener.NewShortener(storage)
+	shortenerService, err := shortener.NewShortener(storage, cfg.GetBaseURL())
 	if err != nil {
 		return nil, err
 	}

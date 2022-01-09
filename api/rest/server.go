@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/vabispklp/yap/internal/config"
 )
 
 // Server implements HTTP server and keeps its dependencies.
@@ -15,9 +17,9 @@ type Server struct {
 	started bool
 }
 
-func NewServer() (*Server, error) {
-	server := http.Server{Addr: "localhost:8080"}
-	router, err := initRouter()
+func NewServer(cfg config.ConfigExpected) (*Server, error) {
+	server := http.Server{Addr: cfg.GetServerAddr()}
+	router, err := initRouter(cfg)
 	if err != nil {
 		return nil, err
 	}
