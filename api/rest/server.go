@@ -4,12 +4,11 @@ import (
 	"context"
 	"log"
 	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
 	"time"
 )
 
+// Server implements HTTP server and keeps its dependencies.
+// Contract: not thread-safe
 type Server struct {
 	server *http.Server
 
@@ -29,23 +28,11 @@ func NewServer() (*Server, error) {
 }
 
 func (s *Server) Start(ctx context.Context) error {
-	done := make(chan os.Signal, 1)
-	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
-
 	go func() {
 		log.Print(s.server.ListenAndServe())
 	}()
 
 	s.started = true
-	log.Print("Server Started")
-
-	<-done
-	log.Print("Graceful shutdown Started")
-
-	if err := s.Close(ctx); err != nil {
-		log.Fatalf("Server Close error: %s", err)
-		return err
-	}
 
 	return nil
 }

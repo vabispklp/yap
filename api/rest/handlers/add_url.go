@@ -14,13 +14,13 @@ func (h *Handler) GetHandlerAddURL() func(w http.ResponseWriter, r *http.Request
 			return
 		}
 
-		defer r.Body.Close()
-
 		b, err := io.ReadAll(r.Body)
 		if err != nil {
 			http.Error(w, errTextInternal, http.StatusInternalServerError)
 			return
 		}
+
+		defer r.Body.Close()
 
 		stringURL := string(b)
 		if stringURL == "" {

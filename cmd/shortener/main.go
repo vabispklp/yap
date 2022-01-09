@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/vabispklp/yap/api/rest"
 )
@@ -20,5 +23,14 @@ func main() {
 		}
 	}()
 
-	log.Print(server.Start(ctx))
+	done := make(chan os.Signal, 1)
+	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+	if err = server.Start(ctx); err != nil {
+		log.Fatalf("Server Close error: %s", err)
+	}
+	log.Print("Server Started")
+
+	<-done
+	log.Print("Graceful shutdown Started")
 }
