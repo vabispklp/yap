@@ -5,15 +5,19 @@ import (
 
 	"github.com/vabispklp/yap/api/rest/handlers"
 	"github.com/vabispklp/yap/internal/app/service/shortener"
-	"github.com/vabispklp/yap/internal/app/storage/inmem"
+	"github.com/vabispklp/yap/internal/app/storage/ondisk"
 	"github.com/vabispklp/yap/internal/config"
 )
 
 func initRouter(cfg config.ConfigExpected) (*chi.Mux, error) {
 	router := chi.NewRouter()
 
-	storage := inmem.New()
-	shortenerService, err := shortener.NewShortener(storage, cfg.GetBaseURL())
+	storageOnDisk, err := ondisk.New(cfg.GetFileStoragePath())
+	if err != nil {
+		return nil, err
+	}
+
+	shortenerService, err := shortener.NewShortener(storageOnDisk, cfg.GetBaseURL())
 	if err != nil {
 		return nil, err
 	}

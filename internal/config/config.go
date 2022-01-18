@@ -7,8 +7,9 @@ import (
 )
 
 type config struct {
-	ServerAddr string  `env:"SERVER_ADDRESS" envDefault:"localhost:8080"`
-	BaseURL    url.URL `env:"BASE_URL" envDefault:"http://localhost:8080"`
+	ServerAddr      string  `env:"SERVER_ADDRESS" envDefault:"localhost:8080"`
+	BaseURL         url.URL `env:"BASE_URL" envDefault:"http://localhost:8080"`
+	FileStoragePath string  `env:"FILE_STORAGE_PATH" envDefault:"tmp"`
 }
 
 func InitConfig() (*config, error) {
@@ -26,4 +27,8 @@ func (c *config) GetServerAddr() string {
 
 func (c *config) GetBaseURL() url.URL {
 	return c.BaseURL
+}
+
+func (c *config) GetFileStoragePath() string {
+	return c.FileStoragePath
 }
