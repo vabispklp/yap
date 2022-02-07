@@ -33,6 +33,10 @@ func (h *Handler) GetHandlerAddURL() func(w http.ResponseWriter, r *http.Request
 			return
 		}
 
+		// middleware
+		uid, err := auth(w, r)
+		println(uid)
+
 		resultURL, err := h.service.AddRedirectLink(ctx, stringURL)
 		if err != nil {
 			http.Error(w, errTextInternal, http.StatusInternalServerError)

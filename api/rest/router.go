@@ -9,7 +9,7 @@ import (
 
 func initRouter(shortener *shortener.Shortener) (*chi.Mux, error) {
 	router := chi.NewRouter()
-	router.Use(middleware.GzipHandle)
+	router.Use(middleware.GzipHandle, middleware.AuthHandle)
 
 	h, err := handlers.NewHandler(shortener)
 	if err != nil {
