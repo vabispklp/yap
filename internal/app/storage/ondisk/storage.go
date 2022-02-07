@@ -11,9 +11,8 @@ import (
 )
 
 type Storage struct {
+	sync.Mutex
 	filePath string
-
-	mu sync.Mutex
 
 	writeFile *os.File
 	readFile  *os.File
@@ -34,7 +33,6 @@ func New(filePath string) (*Storage, error) {
 
 	return &Storage{
 		filePath:  filePath,
-		mu:        sync.Mutex{},
 		writeFile: writeFile,
 		readFile:  readFile,
 		encoder:   json.NewEncoder(writeFile),
@@ -60,8 +58,8 @@ func (s *Storage) AddRedirectLink(_ context.Context, shortURL model.ShortURL) er
 func (s *Storage) getByID(id string) (*model.ShortURL, error) {
 	var result, item *model.ShortURL
 
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	s.Lock()
+	defer s.Unlock()
 
 	_, err := s.readFile.Seek(0, io.SeekStart)
 	if err != nil {

@@ -5,24 +5,12 @@ import (
 
 	"github.com/vabispklp/yap/api/rest/handlers"
 	"github.com/vabispklp/yap/internal/app/service/shortener"
-	"github.com/vabispklp/yap/internal/app/storage/ondisk"
-	"github.com/vabispklp/yap/internal/config"
 )
 
-func initRouter(cfg config.ConfigExpected) (*chi.Mux, error) {
+func initRouter(shortener *shortener.Shortener) (*chi.Mux, error) {
 	router := chi.NewRouter()
 
-	storageOnDisk, err := ondisk.New(cfg.GetFileStoragePath())
-	if err != nil {
-		return nil, err
-	}
-
-	shortenerService, err := shortener.NewShortener(storageOnDisk, cfg.GetBaseURL())
-	if err != nil {
-		return nil, err
-	}
-
-	h, err := handlers.NewHandler(shortenerService)
+	h, err := handlers.NewHandler(shortener)
 	if err != nil {
 		return nil, err
 	}

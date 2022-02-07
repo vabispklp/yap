@@ -26,7 +26,7 @@ func init() {
 	flag.Parse()
 }
 
-func InitConfig() (*config, error) {
+func GetConfig() (*config, error) {
 	var cfg config
 
 	if err := env.Parse(&cfg); err != nil {

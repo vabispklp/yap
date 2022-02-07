@@ -74,7 +74,7 @@ func TestHandler_AddShorten(t *testing.T) {
 			defer res.Body.Close()
 			result, err := ioutil.ReadAll(res.Body)
 
-			require.Nil(t, err, "decode error not nil")
+			require.NoError(t, err, "decode has error")
 			assert.Equal(t, res.StatusCode, tt.want.statusCode, "Unexpected status code")
 			assert.NotEqual(t, string(result), "", "Unexpected result")
 		})

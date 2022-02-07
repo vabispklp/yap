@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	cfg, err := config.InitConfig()
+	cfg, err := config.GetConfig()
 	if err != nil {
 		log.Fatalf("Init cinfig error: %s", err)
 	}
