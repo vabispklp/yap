@@ -4,27 +4,26 @@ import (
 	"context"
 	"crypto/md5"
 	"encoding/hex"
-	"fmt"
-	"github.com/vabispklp/yap/internal/app/storage"
+	"net/url"
 
 	"github.com/vabispklp/yap/internal/app/model"
-)
-
-const (
-	resultURLPattern = "http://localhost:8080/%s"
+	"github.com/vabispklp/yap/internal/app/storage"
 )
 
 type Shortener struct {
 	storage storage.StorageExpected
+
+	baseURL url.URL
 }
 
-func NewShortener(storage storage.StorageExpected) (*Shortener, error) {
+func NewShortener(storage storage.StorageExpected, baseURL url.URL) (*Shortener, error) {
 	if storage == nil {
 		return nil, ErrNilPointerStorage
 	}
 
 	return &Shortener{
 		storage: storage,
+		baseURL: baseURL,
 	}, nil
 }
 
@@ -45,7 +44,8 @@ func (s *Shortener) AddRedirectLink(ctx context.Context, stringURL string) (stri
 	hash := md5.Sum([]byte(stringURL))
 	resultPath := hex.EncodeToString(hash[:])
 
-	resultURL := fmt.Sprintf(resultURLPattern, resultPath)
+	u := s.baseURL
+	u.Path = resultPath
 
 	err := s.storage.AddRedirectLink(ctx, model.ShortURL{
 		ID:          resultPath,
@@ -55,5 +55,5 @@ func (s *Shortener) AddRedirectLink(ctx context.Context, stringURL string) (stri
 		return "", err
 	}
 
-	return resultURL, nil
+	return u.String(), nil
 }

@@ -8,7 +8,7 @@ import (
 )
 
 type Storage struct {
-	mu      sync.Mutex
+	sync.Mutex
 	urlsMap map[string]model.ShortURL
 }
 
@@ -28,9 +28,9 @@ func (s *Storage) GetRedirectLink(ctx context.Context, id string) (*model.ShortU
 }
 
 func (s *Storage) AddRedirectLink(ctx context.Context, shortURL model.ShortURL) error {
-	s.mu.Lock()
+	s.Lock()
 	s.urlsMap[shortURL.ID] = shortURL
-	s.mu.Unlock()
+	s.Unlock()
 
 	return nil
 }

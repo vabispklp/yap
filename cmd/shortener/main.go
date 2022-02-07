@@ -8,10 +8,16 @@ import (
 	"syscall"
 
 	"github.com/vabispklp/yap/api/rest"
+	"github.com/vabispklp/yap/internal/config"
 )
 
 func main() {
-	server, err := rest.NewServer()
+	cfg, err := config.GetConfig()
+	if err != nil {
+		log.Fatalf("Init cinfig error: %s", err)
+	}
+
+	server, err := rest.NewServer(cfg)
 	if err != nil {
 		log.Fatal(err)
 	}
