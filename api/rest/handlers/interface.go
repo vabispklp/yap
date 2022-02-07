@@ -9,4 +9,6 @@ import (
 type ShortenerExpected interface {
 	GetRedirectLink(ctx context.Context, id string) (*model.ShortURL, error)
 	AddRedirectLink(ctx context.Context, stringURL string) (string, error)
+
+	Ping(ctx context.Context) error
 }

@@ -2,7 +2,7 @@
 // Source: github.com/vabispklp/yap/api/rest/handlers (interfaces: ShortenerExpected)
 
 // Package service_mock is a generated GoMock package.
-package mock
+package service_mock
 
 import (
 	context "context"
@@ -63,4 +63,18 @@ func (m *MockShortenerExpected) GetRedirectLink(arg0 context.Context, arg1 strin
 func (mr *MockShortenerExpectedMockRecorder) GetRedirectLink(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRedirectLink", reflect.TypeOf((*MockShortenerExpected)(nil).GetRedirectLink), arg0, arg1)
+}
+
+// Ping mocks base method.
+func (m *MockShortenerExpected) Ping(arg0 context.Context) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Ping", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Ping indicates an expected call of Ping.
+func (mr *MockShortenerExpectedMockRecorder) Ping(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Ping", reflect.TypeOf((*MockShortenerExpected)(nil).Ping), arg0)
 }

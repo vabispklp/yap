@@ -2,7 +2,7 @@
 // Source: github.com/vabispklp/yap/internal/app/storage (interfaces: StorageExpected)
 
 // Package storage_mock is a generated GoMock package.
-package mock
+package storage_mock
 
 import (
 	context "context"

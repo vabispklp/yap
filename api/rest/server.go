@@ -2,6 +2,7 @@ package rest
 
 import (
 	"context"
+	"database/sql"
 	"github.com/vabispklp/yap/internal/app/service/shortener"
 	"github.com/vabispklp/yap/internal/app/storage/ondisk"
 	"log"
@@ -19,7 +20,7 @@ type Server struct {
 	started bool
 }
 
-func NewServer(cfg config.ConfigExpected) (*Server, error) {
+func NewServer(cfg config.ConfigExpected, db *sql.DB) (*Server, error) {
 	server := http.Server{Addr: cfg.GetServerAddr()}
 
 	storageOnDisk, err := ondisk.New(cfg.GetFileStoragePath())
@@ -27,7 +28,7 @@ func NewServer(cfg config.ConfigExpected) (*Server, error) {
 		return nil, err
 	}
 
-	shortenerService, err := shortener.NewShortener(storageOnDisk, cfg.GetBaseURL())
+	shortenerService, err := shortener.NewShortener(storageOnDisk, db, cfg.GetBaseURL())
 	if err != nil {
 		return nil, err
 	}

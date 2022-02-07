@@ -22,6 +22,7 @@ func initRouter(shortener *shortener.Shortener) (*chi.Mux, error) {
 	router.Get("/{id}", h.GetHandleGetURL())
 	router.Post("/", h.GetHandlerAddURL())
 	router.Post("/api/shorten", h.GetHandlerAddShorten())
+	router.Get("/ping", h.GetHandlerPing())
 
 	return router, nil
 }
