@@ -7,7 +7,7 @@ import (
 )
 
 func (s *Shortener) GetRedirectLink(ctx context.Context, id string) (*model.ShortURL, error) {
-	result, err := s.storage.GetRedirectLink(ctx, id)
+	result, err := s.storage.Get(ctx, id)
 	if err != nil {
 		return nil, err
 	}

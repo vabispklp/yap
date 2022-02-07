@@ -15,14 +15,13 @@ type Shortener struct {
 	baseURL url.URL
 }
 
-func NewShortener(storage storage.StorageExpected, db *sql.DB, baseURL url.URL) (*Shortener, error) {
+func NewShortener(storage storage.StorageExpected, baseURL url.URL) (*Shortener, error) {
 	if storage == nil {
 		return nil, ErrNilPointerStorage
 	}
 
 	return &Shortener{
 		storage: storage,
-		db:      db,
 		baseURL: baseURL,
 	}, nil
 }

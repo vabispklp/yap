@@ -35,31 +35,59 @@ func (m *MockStorageExpected) EXPECT() *MockStorageExpectedMockRecorder {
 	return m.recorder
 }
 
-// AddRedirectLink mocks base method.
-func (m *MockStorageExpected) AddRedirectLink(arg0 context.Context, arg1 model.ShortURL) error {
+// Add mocks base method.
+func (m *MockStorageExpected) Add(arg0 context.Context, arg1 model.ShortURL) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddRedirectLink", arg0, arg1)
+	ret := m.ctrl.Call(m, "Add", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// AddRedirectLink indicates an expected call of AddRedirectLink.
-func (mr *MockStorageExpectedMockRecorder) AddRedirectLink(arg0, arg1 interface{}) *gomock.Call {
+// Add indicates an expected call of Add.
+func (mr *MockStorageExpectedMockRecorder) Add(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddRedirectLink", reflect.TypeOf((*MockStorageExpected)(nil).AddRedirectLink), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockStorageExpected)(nil).Add), arg0, arg1)
 }
 
-// GetRedirectLink mocks base method.
-func (m *MockStorageExpected) GetRedirectLink(arg0 context.Context, arg1 string) (*model.ShortURL, error) {
+// Close mocks base method.
+func (m *MockStorageExpected) Close() error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetRedirectLink", arg0, arg1)
+	ret := m.ctrl.Call(m, "Close")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Close indicates an expected call of Close.
+func (mr *MockStorageExpectedMockRecorder) Close() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockStorageExpected)(nil).Close))
+}
+
+// Get mocks base method.
+func (m *MockStorageExpected) Get(arg0 context.Context, arg1 string) (*model.ShortURL, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Get", arg0, arg1)
 	ret0, _ := ret[0].(*model.ShortURL)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetRedirectLink indicates an expected call of GetRedirectLink.
-func (mr *MockStorageExpectedMockRecorder) GetRedirectLink(arg0, arg1 interface{}) *gomock.Call {
+// Get indicates an expected call of Get.
+func (mr *MockStorageExpectedMockRecorder) Get(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRedirectLink", reflect.TypeOf((*MockStorageExpected)(nil).GetRedirectLink), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockStorageExpected)(nil).Get), arg0, arg1)
+}
+
+// Ping mocks base method.
+func (m *MockStorageExpected) Ping(arg0 context.Context) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Ping", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Ping indicates an expected call of Ping.
+func (mr *MockStorageExpectedMockRecorder) Ping(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Ping", reflect.TypeOf((*MockStorageExpected)(nil).Ping), arg0)
 }

@@ -7,6 +7,9 @@ import (
 )
 
 type StorageExpected interface {
-	GetRedirectLink(ctx context.Context, id string) (*model.ShortURL, error)
-	AddRedirectLink(ctx context.Context, shortURL model.ShortURL) error
+	Get(ctx context.Context, id string) (*model.ShortURL, error)
+	Add(ctx context.Context, shortURL model.ShortURL) error
+
+	Ping(ctx context.Context) error
+	Close() error
 }

@@ -15,7 +15,7 @@ func (s *Shortener) AddRedirectLink(ctx context.Context, stringURL string) (stri
 	u := s.baseURL
 	u.Path = resultPath
 
-	err := s.storage.AddRedirectLink(ctx, model.ShortURL{
+	err := s.storage.Add(ctx, model.ShortURL{
 		ID:          resultPath,
 		OriginalURL: stringURL,
 	})

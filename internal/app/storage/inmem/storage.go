@@ -12,13 +12,13 @@ type Storage struct {
 	urlsMap map[string]model.ShortURL
 }
 
-func New() *Storage {
+func NewStorage() *Storage {
 	return &Storage{
 		urlsMap: make(map[string]model.ShortURL),
 	}
 }
 
-func (s *Storage) GetRedirectLink(ctx context.Context, id string) (*model.ShortURL, error) {
+func (s *Storage) Get(_ context.Context, id string) (*model.ShortURL, error) {
 	shortURL, ok := s.urlsMap[id]
 	if !ok {
 		return nil, nil
@@ -27,10 +27,18 @@ func (s *Storage) GetRedirectLink(ctx context.Context, id string) (*model.ShortU
 	return &shortURL, nil
 }
 
-func (s *Storage) AddRedirectLink(ctx context.Context, shortURL model.ShortURL) error {
+func (s *Storage) Add(_ context.Context, shortURL model.ShortURL) error {
 	s.Lock()
 	s.urlsMap[shortURL.ID] = shortURL
 	s.Unlock()
 
+	return nil
+}
+
+func (s *Storage) Close() error {
+	return nil
+}
+
+func (s *Storage) Ping(_ context.Context) error {
 	return nil
 }

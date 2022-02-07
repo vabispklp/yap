@@ -2,14 +2,16 @@ package main
 
 import (
 	"context"
-	"database/sql"
+	_ "github.com/lib/pq"
+	"github.com/vabispklp/yap/internal/app/service/shortener"
+	"github.com/vabispklp/yap/internal/app/storage"
+	"github.com/vabispklp/yap/internal/app/storage/inmem"
+	"github.com/vabispklp/yap/internal/app/storage/ondisk"
+	"github.com/vabispklp/yap/internal/app/storage/postgres"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
-
-	_ "github.com/lib/pq"
 
 	"github.com/vabispklp/yap/api/rest"
 	"github.com/vabispklp/yap/internal/config"
@@ -22,20 +24,43 @@ func main() {
 	}
 	ctx := context.Background()
 
-	db, err := mustDB(ctx, cfg.GetDatabaseDSN())
+	var storageService storage.StorageExpected
+	if storageService == nil {
+		storageService, err = postgres.NewStorage(cfg.GetDatabaseDSN())
+		if err != nil {
+			log.Print(err)
+		}
+	}
+
+	if storageService == nil {
+		storageService, err = ondisk.NewStorage(cfg.GetFileStoragePath())
+		if err != nil {
+			log.Print(err)
+		}
+	}
+
+	if storageService == nil {
+		storageService = inmem.NewStorage()
+		if err != nil {
+			log.Print(err)
+		}
+	}
+
+	defer storageService.Close()
+
+	shortenerService, err := shortener.NewShortener(storageService, cfg.GetBaseURL())
 	if err != nil {
 		log.Print(err)
 	}
-	defer db.Close()
 
-	server, err := rest.NewServer(cfg, db)
+	server, err := rest.NewServer(cfg, shortenerService)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	defer func() {
 		if err = server.Close(ctx); err != nil {
-			log.Fatalf("Server Close error: %s", err)
+			log.Println("Server Close error: " + err.Error())
 		}
 	}()
 
@@ -43,25 +68,10 @@ func main() {
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
 	if err = server.Start(ctx); err != nil {
-		log.Fatalf("Server Close error: %s", err)
+		log.Println("ыerver Close error: " + err.Error())
 	}
 	log.Print("Server Started")
 
 	<-done
 	log.Print("Graceful shutdown Started")
-}
-
-func mustDB(ctx context.Context, dsn string) (*sql.DB, error) {
-	db, err := sql.Open("postgres", dsn)
-	if err != nil {
-		return nil, err
-	}
-
-	ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
-	defer cancel()
-	if err = db.PingContext(ctx); err != nil {
-		return nil, err
-	}
-
-	return db, nil
 }

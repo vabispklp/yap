@@ -47,7 +47,7 @@ func TestStorage_GetRedirectLink(t *testing.T) {
 			r := &Storage{
 				urlsMap: urlsMap,
 			}
-			result, err := r.GetRedirectLink(tt.args.ctx, tt.args.id)
+			result, err := r.Get(tt.args.ctx, tt.args.id)
 
 			assert.Equal(t, tt.expectedErr, err, "Unexpected error")
 			assert.Equal(t, tt.expectedResult, result, "Unexpected result")
@@ -86,7 +86,7 @@ func TestStorage_AddRedirectLink(t *testing.T) {
 			r := &Storage{
 				urlsMap: tt.fields.urlsMap,
 			}
-			err := r.AddRedirectLink(tt.args.ctx, tt.args.shortURL)
+			err := r.Add(tt.args.ctx, tt.args.shortURL)
 
 			assert.Equal(t, tt.expectedErr, err, "Unexpected error")
 		})

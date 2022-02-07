@@ -1,0 +1,14 @@
+version: "3.5"
+
+services:
+  postgres:
+    container_name: local_postgres
+    image: postgres
+    environment:
+      POSTGRES_DB: "shortener"
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: ""
+      POSTGRES_HOST_AUTH_METHOD: trust
+
+    ports:
+      - "5432:5432"

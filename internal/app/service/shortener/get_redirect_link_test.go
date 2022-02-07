@@ -66,7 +66,7 @@ func TestShortener_GetRedirectLink(t *testing.T) {
 			storageMock := storageMock.NewMockStorageExpected(ctrl)
 
 			storageMock.EXPECT().
-				GetRedirectLink(gomock.Any(), gomock.Any()).
+				Get(gomock.Any(), gomock.Any()).
 				Return(tt.getStorageResult.shortURL, tt.getStorageResult.err)
 
 			s := &Shortener{

@@ -25,7 +25,7 @@ func init() {
 	flag.StringVar(&flagConfig.ServerAddr, "a", "localhost:8080", "host:port to listen")
 	flag.StringVar(&flagConfig.BaseURL, "b", "http://localhost:8080", "base url shorten URL")
 	flag.StringVar(&flagConfig.FileStoragePath, "f", "tmp", "path to storage file")
-	flag.StringVar(&flagConfig.DatabaseDSN, "d", "localhost:5432", "database dsn")
+	flag.StringVar(&flagConfig.DatabaseDSN, "d", "host=localhost port=5432 user=user dbname=shortener sslmode=disable", "database dsn")
 	flag.Parse()
 }
 
