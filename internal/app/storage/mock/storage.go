@@ -49,6 +49,20 @@ func (mr *MockStorageExpectedMockRecorder) Add(arg0, arg1 interface{}) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockStorageExpected)(nil).Add), arg0, arg1)
 }
 
+// AddMany mocks base method.
+func (m *MockStorageExpected) AddMany(arg0 context.Context, arg1 []model.ShortURL) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddMany", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddMany indicates an expected call of AddMany.
+func (mr *MockStorageExpectedMockRecorder) AddMany(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddMany", reflect.TypeOf((*MockStorageExpected)(nil).AddMany), arg0, arg1)
+}
+
 // Close mocks base method.
 func (m *MockStorageExpected) Close() error {
 	m.ctrl.T.Helper()

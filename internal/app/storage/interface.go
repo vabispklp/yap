@@ -7,8 +7,9 @@ import (
 
 type StorageExpected interface {
 	Get(ctx context.Context, id string) (*model.ShortURL, error)
-	Add(ctx context.Context, shortURL model.ShortURL) error
 	GetByUser(ctx context.Context, userID string) ([]model.ShortURL, error)
+	Add(ctx context.Context, shortURL model.ShortURL) error
+	AddMany(ctx context.Context, shortURLs []model.ShortURL) error
 
 	Ping(ctx context.Context) error
 	Close() error

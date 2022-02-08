@@ -37,10 +37,6 @@ func TestShortener_AddRedirectLink(t *testing.T) {
 
 			storageMock := storageMock.NewMockStorageExpected(ctrl)
 			storageMock.EXPECT().
-				Get(gomock.Any(), gomock.Any()).
-				Return(nil, nil)
-
-			storageMock.EXPECT().
 				Add(gomock.Any(), gomock.Any()).
 				Return(tt.addStorageResult)
 

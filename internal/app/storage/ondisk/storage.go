@@ -40,37 +40,22 @@ func NewStorage(filePath string) (storage.StorageExpected, error) {
 }
 
 func (s *Storage) Get(_ context.Context, id string) (*model.ShortURL, error) {
-	var result, item *model.ShortURL
-
-	s.Lock()
-	defer s.Unlock()
-
-	_, err := s.readFile.Seek(0, io.SeekStart)
-	if err != nil {
-		return nil, err
-	}
-
-	decoder := json.NewDecoder(s.readFile)
-	for decoder.More() {
-		err = decoder.Decode(&item)
-		if err != nil {
-			return nil, err
-		}
-
-		if item.ID == id {
-			result = item
-			break
-		}
-	}
-
-	return result, nil
+	return s.getByID(id)
 }
 
 func (s *Storage) Add(_ context.Context, shortURL model.ShortURL) error {
+	savedURL, err := s.getByID(shortURL.ID)
+	if err != nil {
+		return err
+	}
+	if savedURL != nil {
+		return nil
+	}
+
 	return s.encoder.Encode(shortURL)
 }
 
-func (s *Storage) GetByUser(ctx context.Context, userID string) ([]model.ShortURL, error) {
+func (s *Storage) GetByUser(_ context.Context, userID string) ([]model.ShortURL, error) {
 	var (
 		item model.ShortURL
 	)
@@ -99,6 +84,37 @@ func (s *Storage) GetByUser(ctx context.Context, userID string) ([]model.ShortUR
 	return result, nil
 }
 
+func (s *Storage) getByID(id string) (*model.ShortURL, error) {
+	var result, item *model.ShortURL
+
+	s.Lock()
+	defer s.Unlock()
+
+	_, err := s.readFile.Seek(0, io.SeekStart)
+	if err != nil {
+		return nil, err
+	}
+
+	decoder := json.NewDecoder(s.readFile)
+	for decoder.More() {
+		err = decoder.Decode(&item)
+		if err != nil {
+			return nil, err
+		}
+
+		if item.ID == id {
+			result = item
+			break
+		}
+	}
+
+	return result, nil
+}
+
+func (s *Storage) AddMany(_ context.Context, _ []model.ShortURL) error {
+	return nil
+}
+
 func (s *Storage) Close() error {
 	err := s.readFile.Close()
 	if err != nil {
@@ -108,6 +124,6 @@ func (s *Storage) Close() error {
 	return s.writeFile.Close()
 }
 
-func (s *Storage) Ping(ctx context.Context) error {
+func (s *Storage) Ping(_ context.Context) error {
 	return nil
 }

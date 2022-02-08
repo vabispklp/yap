@@ -35,8 +35,12 @@ func (s *Storage) Add(_ context.Context, shortURL model.ShortURL) error {
 	return nil
 }
 
-func (s *Storage) GetByUser(ctx context.Context, userID string) ([]model.ShortURL, error) {
+func (s *Storage) GetByUser(_ context.Context, _ string) ([]model.ShortURL, error) {
 	return nil, nil
+}
+
+func (s *Storage) AddMany(_ context.Context, _ []model.ShortURL) error {
+	return nil
 }
 
 func (s *Storage) Close() error {
