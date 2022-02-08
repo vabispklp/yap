@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"github.com/jackc/pgerrcode"
+	"github.com/lib/pq"
 	"github.com/vabispklp/yap/api/rest/middleware"
 	"io"
 	"net/http"
@@ -40,13 +42,22 @@ func (h *Handler) GetHandlerAddURL() func(w http.ResponseWriter, r *http.Request
 			return
 		}
 
+		status := http.StatusCreated
+
 		resultURL, err := h.service.AddRedirectLink(ctx, stringURL, userID)
 		if err != nil {
-			http.Error(w, errTextInternal, http.StatusInternalServerError)
-			return
+			// всегда false
+			//if errors.As(err, &pq.Error{}) {}
+			pqErr, ok := err.(*pq.Error)
+			if ok && pqErr.Code == pgerrcode.UniqueViolation {
+				status = http.StatusConflict
+			} else {
+				http.Error(w, errTextInternal, http.StatusInternalServerError)
+				return
+			}
 		}
 
-		w.WriteHeader(http.StatusCreated)
+		w.WriteHeader(status)
 		w.Write([]byte(resultURL))
 	}
 }

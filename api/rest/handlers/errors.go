@@ -4,6 +4,7 @@ import "errors"
 
 const (
 	errTextInternal             = "Internal error"
+	errConflict                 = "Shorten URL already exist"
 	errTextEmptyID              = "Empty id"
 	errTextInvalidURL           = `Parameter "url" is invalid`
 	errTextInvalidOriginalURL   = `Parameter "original_url" is invalid`

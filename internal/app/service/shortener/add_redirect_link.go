@@ -20,9 +20,5 @@ func (s *Shortener) AddRedirectLink(ctx context.Context, stringURL, userID strin
 		OriginalURL: stringURL,
 	})
 
-	if err != nil {
-		return "", err
-	}
-
-	return u.String(), nil
+	return u.String(), err
 }
