@@ -3,21 +3,22 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"github.com/vabispklp/yap/internal/app/storage"
 	"time"
 )
 
 const initSQL = "CREATE TABLE IF NOT EXISTS short_url (" +
 	"id VARCHAR(100) NOT NULL," +
-	"user_id VARCHAR(16) NOT NULL," +
+	"user_id VARCHAR(32) NOT NULL," +
 	"original_url VARCHAR(100) NOT NULL," +
-	"PRIMARY KEY (id)" +
+	"PRIMARY KEY (id,user_id)" +
 	");"
 
 type Storage struct {
 	db *sql.DB
 }
 
-func NewStorage(dsn string) (*Storage, error) {
+func NewStorage(dsn string) (storage.StorageExpected, error) {
 	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		return nil, err

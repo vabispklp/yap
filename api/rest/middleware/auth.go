@@ -8,63 +8,73 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	"github.com/vabispklp/yap/internal/app/storage/model"
 	"log"
 	"net/http"
-
-	"github.com/vabispklp/yap/internal/app/model"
 )
 
 const (
-	cookieNameUID    = "uid"
-	contextKeyUserID = "userID"
+	cookieNameUID               = "uid"
+	ContextKeyUserID contextKey = "userID"
 )
 
 var secret = []byte("Service Secret 1")
+
+type contextKey string
+
+func (c contextKey) String() string {
+	return string(c)
+}
 
 func AuthHandle(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var value string
 		cookie, err := r.Cookie(cookieNameUID)
 		if err == nil {
+			// если ошибок нет, присваиваем значение иначе пустая строка
 			value = cookie.Value
 		}
 
-		var uid, id string
-		var user model.User
+		var (
+			uid, id string
+			user    model.User
+			ok      bool
+		)
 
 		if value != "" {
-			if ok, _ := checkUID(value); !ok {
+			id, ok, _ = checkUID(value)
+			if !ok {
 				http.Error(w, errUnauthorized, http.StatusUnauthorized)
 				return
 			}
-		}
+		} else {
 
-		id, err = generateRandomID()
-		if err != nil {
-			log.Printf("generateRandomID error: %s", err)
-			http.Error(w, errInternal, http.StatusInternalServerError)
-			return
-		}
+			id, err = generateRandomID()
+			if err != nil {
+				log.Printf("generateRandomID error: %s", err)
+				http.Error(w, errInternal, http.StatusInternalServerError)
+				return
+			}
 
-		user = model.User{
-			ID: id,
-		}
-		uid, err = getUIDByUser(user)
-		if err != nil {
-			log.Printf("getUIDByUser error: %s", err)
-			http.Error(w, errInternal, http.StatusInternalServerError)
-			return
-		}
+			user = model.User{
+				ID: id,
+			}
+			uid, err = getUIDByUser(user)
+			if err != nil {
+				log.Printf("getUIDByUser error: %s", err)
+				http.Error(w, errInternal, http.StatusInternalServerError)
+				return
+			}
 
-		http.SetCookie(w, &http.Cookie{
-			Name:  cookieNameUID,
-			Value: uid,
-		})
+			http.SetCookie(w, &http.Cookie{
+				Name:  cookieNameUID,
+				Value: uid,
+			})
+		}
 
 		ctx := r.Context()
-		context.WithValue(ctx, contextKeyUserID, id)
 
-		next.ServeHTTP(w, r.WithContext(ctx))
+		next.ServeHTTP(w, r.WithContext(context.WithValue(ctx, ContextKeyUserID, id)))
 	})
 }
 
@@ -94,24 +104,24 @@ func generateRandomID() (string, error) {
 	return hex.EncodeToString(b), nil
 }
 
-func checkUID(uid string) (bool, error) {
+func checkUID(uid string) (string, bool, error) {
 	var user model.User
 	data, err := base64.StdEncoding.DecodeString(uid)
 	if err != nil {
-		return false, err
+		return "", false, err
 	}
 
 	err = json.Unmarshal(data, &user)
 	if err != nil {
-		return false, err
+		return "", false, err
 	}
 
 	sign, err := generateSign([]byte(user.ID))
 	if err != nil {
-		return false, err
+		return "", false, err
 	}
 
-	return bytes.Equal(user.Sign, sign), nil
+	return user.ID, bytes.Equal(user.Sign, sign), nil
 }
 
 func generateSign(value []byte) ([]byte, error) {

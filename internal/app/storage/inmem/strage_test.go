@@ -2,11 +2,10 @@ package inmem
 
 import (
 	"context"
+	"github.com/vabispklp/yap/internal/app/storage/model"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
-	"github.com/vabispklp/yap/internal/app/model"
 )
 
 func TestStorage_GetRedirectLink(t *testing.T) {

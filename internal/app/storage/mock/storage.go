@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	model "github.com/vabispklp/yap/internal/app/model"
+	model "github.com/vabispklp/yap/internal/app/storage/model"
 )
 
 // MockStorageExpected is a mock of StorageExpected interface.
@@ -76,6 +76,21 @@ func (m *MockStorageExpected) Get(arg0 context.Context, arg1 string) (*model.Sho
 func (mr *MockStorageExpectedMockRecorder) Get(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockStorageExpected)(nil).Get), arg0, arg1)
+}
+
+// GetByUser mocks base method.
+func (m *MockStorageExpected) GetByUser(arg0 context.Context, arg1 string) ([]model.ShortURL, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByUser", arg0, arg1)
+	ret0, _ := ret[0].([]model.ShortURL)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByUser indicates an expected call of GetByUser.
+func (mr *MockStorageExpectedMockRecorder) GetByUser(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUser", reflect.TypeOf((*MockStorageExpected)(nil).GetByUser), arg0, arg1)
 }
 
 // Ping mocks base method.

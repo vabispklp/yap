@@ -2,7 +2,7 @@ package postgres
 
 import (
 	"context"
-	"github.com/vabispklp/yap/internal/app/model"
+	"github.com/vabispklp/yap/internal/app/storage/model"
 )
 
 func (s *Storage) Get(ctx context.Context, id string) (*model.ShortURL, error) {

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"github.com/vabispklp/yap/api/rest/middleware"
 	"io"
 	"net/http"
 	"net/url"
@@ -42,7 +43,13 @@ func (h *Handler) GetHandlerAddShorten() func(w http.ResponseWriter, r *http.Req
 			return
 		}
 
-		resultURL, err := h.service.AddRedirectLink(ctx, args.URL)
+		userID, ok := ctx.Value(middleware.ContextKeyUserID).(string)
+		if !ok {
+			http.Error(w, errTextInternal, http.StatusInternalServerError)
+			return
+		}
+
+		resultURL, err := h.service.AddRedirectLink(ctx, args.URL, userID)
 		if err != nil {
 			http.Error(w, errTextInternal, http.StatusInternalServerError)
 			return

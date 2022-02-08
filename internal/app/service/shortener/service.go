@@ -1,7 +1,6 @@
 package shortener
 
 import (
-	"database/sql"
 	"net/url"
 
 	"github.com/vabispklp/yap/internal/app/storage"
@@ -9,8 +8,6 @@ import (
 
 type Shortener struct {
 	storage storage.StorageExpected
-
-	db *sql.DB
 
 	baseURL url.URL
 }

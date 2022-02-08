@@ -2,8 +2,7 @@ package shortener
 
 import (
 	"context"
-
-	"github.com/vabispklp/yap/internal/app/model"
+	"github.com/vabispklp/yap/internal/app/storage/model"
 )
 
 func (s *Shortener) GetRedirectLink(ctx context.Context, id string) (*model.ShortURL, error) {

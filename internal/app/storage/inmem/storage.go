@@ -2,9 +2,9 @@ package inmem
 
 import (
 	"context"
+	"github.com/vabispklp/yap/internal/app/storage"
+	"github.com/vabispklp/yap/internal/app/storage/model"
 	"sync"
-
-	"github.com/vabispklp/yap/internal/app/model"
 )
 
 type Storage struct {
@@ -12,7 +12,7 @@ type Storage struct {
 	urlsMap map[string]model.ShortURL
 }
 
-func NewStorage() *Storage {
+func NewStorage() storage.StorageExpected {
 	return &Storage{
 		urlsMap: make(map[string]model.ShortURL),
 	}
@@ -33,6 +33,10 @@ func (s *Storage) Add(_ context.Context, shortURL model.ShortURL) error {
 	s.Unlock()
 
 	return nil
+}
+
+func (s *Storage) GetByUser(ctx context.Context, userID string) ([]model.ShortURL, error) {
+	return nil, nil
 }
 
 func (s *Storage) Close() error {

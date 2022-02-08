@@ -4,19 +4,27 @@ import (
 	"context"
 	"crypto/md5"
 	"encoding/hex"
-
-	"github.com/vabispklp/yap/internal/app/model"
+	"github.com/vabispklp/yap/internal/app/storage/model"
 )
 
-func (s *Shortener) AddRedirectLink(ctx context.Context, stringURL string) (string, error) {
+func (s *Shortener) AddRedirectLink(ctx context.Context, stringURL, userID string) (string, error) {
 	hash := md5.Sum([]byte(stringURL))
-	resultPath := hex.EncodeToString(hash[:])
+	id := hex.EncodeToString(hash[:])
 
 	u := s.baseURL
-	u.Path = resultPath
+	u.Path = id
 
-	err := s.storage.Add(ctx, model.ShortURL{
-		ID:          resultPath,
+	shortURL, err := s.storage.Get(ctx, id)
+	if err != nil {
+		return "", err
+	}
+	if shortURL != nil && shortURL.UserID == userID {
+		return u.String(), nil
+	}
+
+	err = s.storage.Add(ctx, model.ShortURL{
+		ID:          id,
+		UserID:      userID,
 		OriginalURL: stringURL,
 	})
 	if err != nil {

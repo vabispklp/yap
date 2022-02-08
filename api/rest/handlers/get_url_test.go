@@ -4,7 +4,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	shortenerMock "github.com/vabispklp/yap/api/rest/handlers/mock"
-	"github.com/vabispklp/yap/internal/app/model"
+	"github.com/vabispklp/yap/internal/app/storage/model"
 	"net/http"
 	"net/http/httptest"
 	"strings"

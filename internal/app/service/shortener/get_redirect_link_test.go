@@ -2,12 +2,12 @@ package shortener
 
 import (
 	"context"
+	"github.com/vabispklp/yap/internal/app/storage/model"
 	"testing"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/vabispklp/yap/internal/app/model"
 	storageMock "github.com/vabispklp/yap/internal/app/storage/mock"
 )
 

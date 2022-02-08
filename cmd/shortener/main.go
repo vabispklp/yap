@@ -4,7 +4,6 @@ import (
 	"context"
 	_ "github.com/lib/pq"
 	"github.com/vabispklp/yap/internal/app/service/shortener"
-	"github.com/vabispklp/yap/internal/app/storage"
 	"github.com/vabispklp/yap/internal/app/storage/inmem"
 	"github.com/vabispklp/yap/internal/app/storage/ondisk"
 	"github.com/vabispklp/yap/internal/app/storage/postgres"
@@ -24,12 +23,9 @@ func main() {
 	}
 	ctx := context.Background()
 
-	var storageService storage.StorageExpected
-	if storageService == nil {
-		storageService, err = postgres.NewStorage(cfg.GetDatabaseDSN())
-		if err != nil {
-			log.Print(err)
-		}
+	storageService, err := postgres.NewStorage(cfg.GetDatabaseDSN())
+	if err != nil {
+		log.Print(err)
 	}
 
 	if storageService == nil {

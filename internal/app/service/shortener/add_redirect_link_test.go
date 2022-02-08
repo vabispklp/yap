@@ -37,13 +37,18 @@ func TestShortener_AddRedirectLink(t *testing.T) {
 
 			storageMock := storageMock.NewMockStorageExpected(ctrl)
 			storageMock.EXPECT().
+				Get(gomock.Any(), gomock.Any()).
+				Return(nil, nil)
+
+			storageMock.EXPECT().
 				Add(gomock.Any(), gomock.Any()).
 				Return(tt.addStorageResult)
 
 			s := &Shortener{
 				storage: storageMock,
 			}
-			result, err := s.AddRedirectLink(tt.args.ctx, tt.args.stringURL)
+
+			result, err := s.AddRedirectLink(tt.args.ctx, tt.args.stringURL, "")
 
 			assert.NotEqual(t, nil, result, "Unexpected result")
 			assert.Equal(t, tt.expectedErr, err, "Unexpected error")

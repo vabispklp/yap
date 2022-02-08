@@ -1,9 +1,9 @@
 package model
 
 type ShortURL struct {
-	ID          string
-	UserID      string
-	OriginalURL string
+	ID          string `json:"id"`
+	UserID      string `json:"user_id"`
+	OriginalURL string `json:"original_url"`
 }
 
 type User struct {
