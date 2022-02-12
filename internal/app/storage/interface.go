@@ -2,11 +2,15 @@ package storage
 
 import (
 	"context"
-
-	"github.com/vabispklp/yap/internal/app/model"
+	"github.com/vabispklp/yap/internal/app/storage/model"
 )
 
 type StorageExpected interface {
-	GetRedirectLink(ctx context.Context, id string) (*model.ShortURL, error)
-	AddRedirectLink(ctx context.Context, shortURL model.ShortURL) error
+	Get(ctx context.Context, id string) (*model.ShortURL, error)
+	GetByUser(ctx context.Context, userID string) ([]model.ShortURL, error)
+	Add(ctx context.Context, shortURL model.ShortURL) error
+	AddMany(ctx context.Context, shortURLs []model.ShortURL) error
+
+	Ping(ctx context.Context) error
+	Close() error
 }

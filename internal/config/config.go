@@ -11,18 +11,21 @@ type config struct {
 	ServerAddr      string  `env:"SERVER_ADDRESS"`
 	BaseURL         url.URL `env:"BASE_URL"`
 	FileStoragePath string  `env:"FILE_STORAGE_PATH"`
+	DatabaseDSN     string  `env:"DATABASE_DSN"`
 }
 
 var flagConfig struct {
 	ServerAddr      string
 	BaseURL         string
 	FileStoragePath string
+	DatabaseDSN     string
 }
 
 func init() {
 	flag.StringVar(&flagConfig.ServerAddr, "a", "localhost:8080", "host:port to listen")
 	flag.StringVar(&flagConfig.BaseURL, "b", "http://localhost:8080", "base url shorten URL")
 	flag.StringVar(&flagConfig.FileStoragePath, "f", "tmp", "path to storage file")
+	flag.StringVar(&flagConfig.DatabaseDSN, "d", "host=localhost port=5432 user=user dbname=shortener sslmode=disable", "database dsn")
 	flag.Parse()
 }
 
@@ -49,6 +52,10 @@ func GetConfig() (*config, error) {
 		cfg.FileStoragePath = flagConfig.FileStoragePath
 	}
 
+	if cfg.DatabaseDSN == "" {
+		cfg.DatabaseDSN = flagConfig.DatabaseDSN
+	}
+
 	return &cfg, nil
 }
 
@@ -62,4 +69,8 @@ func (c *config) GetBaseURL() url.URL {
 
 func (c *config) GetFileStoragePath() string {
 	return c.FileStoragePath
+}
+
+func (c *config) GetDatabaseDSN() string {
+	return c.DatabaseDSN
 }

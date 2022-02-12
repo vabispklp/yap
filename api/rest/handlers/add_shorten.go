@@ -2,6 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
+	"github.com/jackc/pgerrcode"
+	"github.com/lib/pq"
+	"github.com/vabispklp/yap/api/rest/middleware"
 	"io"
 	"net/http"
 	"net/url"
@@ -42,10 +45,25 @@ func (h *Handler) GetHandlerAddShorten() func(w http.ResponseWriter, r *http.Req
 			return
 		}
 
-		resultURL, err := h.service.AddRedirectLink(ctx, args.URL)
-		if err != nil {
+		userID, ok := ctx.Value(middleware.ContextKeyUserID).(string)
+		if !ok {
 			http.Error(w, errTextInternal, http.StatusInternalServerError)
 			return
+		}
+
+		status := http.StatusCreated
+
+		resultURL, err := h.service.AddRedirectLink(ctx, args.URL, userID)
+		if err != nil {
+			// всегда false
+			//if errors.As(err, &pq.Error{}) {}
+			pqErr, ok := err.(*pq.Error)
+			if ok && pqErr.Code == pgerrcode.UniqueViolation {
+				status = http.StatusConflict
+			} else {
+				http.Error(w, errTextInternal, http.StatusInternalServerError)
+				return
+			}
 		}
 
 		b, err = json.Marshal(AddShortenResponse{
@@ -57,7 +75,7 @@ func (h *Handler) GetHandlerAddShorten() func(w http.ResponseWriter, r *http.Req
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusCreated)
+		w.WriteHeader(status)
 		w.Write(b)
 	}
 }

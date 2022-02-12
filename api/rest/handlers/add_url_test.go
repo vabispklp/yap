@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"context"
+	"github.com/vabispklp/yap/api/rest/middleware"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -60,12 +62,14 @@ func TestHandler_AddURL(t *testing.T) {
 			shortenerServiceMock := shortenerMock.NewMockShortenerExpected(ctrl)
 
 			shortenerServiceMock.EXPECT().
-				AddRedirectLink(gomock.Any(), gomock.Any()).
+				AddRedirectLink(gomock.Any(), gomock.Any(), gomock.Any()).
 				Return(tt.addStorageResult.url, tt.addStorageResult.err)
 
 			h := Handler{service: shortenerServiceMock}
 
-			h.GetHandlerAddURL()(w, request)
+			ctx := request.Context()
+
+			h.GetHandlerAddURL()(w, request.WithContext(context.WithValue(ctx, middleware.ContextKeyUserID, "someUserID")))
 
 			res := w.Result()
 			defer res.Body.Close()
