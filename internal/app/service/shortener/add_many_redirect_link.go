@@ -9,9 +9,9 @@ import (
 	storageModel "github.com/vabispklp/yap/internal/app/storage/model"
 )
 
-func (s *Shortener) AddManyRedirectLink(ctx context.Context, shortenBatchItems []model.ShortenBatch, userID string) ([]model.ShortenBatchResult, error) {
+func (s *Shortener) AddManyRedirectLink(ctx context.Context, shortenBatchItems []model.ShortenBatchRequest, userID string) ([]model.ShortenBatchResponse, error) {
 	shortURLs := make([]storageModel.ShortURL, 0, len(shortenBatchItems))
-	result := make([]model.ShortenBatchResult, 0, len(shortenBatchItems))
+	result := make([]model.ShortenBatchResponse, 0, len(shortenBatchItems))
 	for _, item := range shortenBatchItems {
 		hash := md5.Sum([]byte(item.OriginalURL))
 		id := hex.EncodeToString(hash[:])
@@ -25,7 +25,7 @@ func (s *Shortener) AddManyRedirectLink(ctx context.Context, shortenBatchItems [
 			OriginalURL: item.OriginalURL,
 		})
 
-		result = append(result, model.ShortenBatchResult{
+		result = append(result, model.ShortenBatchResponse{
 			CorrelationID: item.CorrelationID,
 			ShortURL:      u.String(),
 		})

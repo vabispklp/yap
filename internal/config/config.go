@@ -7,7 +7,7 @@ import (
 	"github.com/caarlos0/env/v6"
 )
 
-type config struct {
+type Сonfig struct {
 	ServerAddr      string  `env:"SERVER_ADDRESS"`
 	BaseURL         url.URL `env:"BASE_URL"`
 	FileStoragePath string  `env:"FILE_STORAGE_PATH"`
@@ -29,8 +29,8 @@ func init() {
 	flag.Parse()
 }
 
-func GetConfig() (*config, error) {
-	var cfg config
+func GetConfig() (*Сonfig, error) {
+	var cfg Сonfig
 
 	if err := env.Parse(&cfg); err != nil {
 		return nil, err
@@ -57,20 +57,4 @@ func GetConfig() (*config, error) {
 	}
 
 	return &cfg, nil
-}
-
-func (c *config) GetServerAddr() string {
-	return c.ServerAddr
-}
-
-func (c *config) GetBaseURL() url.URL {
-	return c.BaseURL
-}
-
-func (c *config) GetFileStoragePath() string {
-	return c.FileStoragePath
-}
-
-func (c *config) GetDatabaseDSN() string {
-	return c.DatabaseDSN
 }

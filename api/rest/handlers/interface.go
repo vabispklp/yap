@@ -9,9 +9,9 @@ import (
 
 type ShortenerExpected interface {
 	GetRedirectLink(ctx context.Context, id string) (*storageModel.ShortURL, error)
-	GetUserURLs(ctx context.Context, userID string) ([]model.Shorten, error)
+	GetUserURLs(ctx context.Context, userID string) ([]model.ShortenItemResponse, error)
 	AddRedirectLink(ctx context.Context, stringURL, userID string) (string, error)
-	AddManyRedirectLink(ctx context.Context, shortenBatchItems []model.ShortenBatch, userID string) ([]model.ShortenBatchResult, error)
+	AddManyRedirectLink(ctx context.Context, shortenBatchItems []model.ShortenBatchRequest, userID string) ([]model.ShortenBatchResponse, error)
 
 	Ping(ctx context.Context) error
 }

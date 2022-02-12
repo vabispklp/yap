@@ -25,7 +25,7 @@ func (h *Handler) GetHandlerAddBatch() func(w http.ResponseWriter, r *http.Reque
 
 		defer r.Body.Close()
 
-		var requestItems []model.ShortenBatch
+		var requestItems []model.ShortenBatchRequest
 		if err = json.Unmarshal(b, &requestItems); err != nil {
 			http.Error(w, errTextEmptyURL, http.StatusBadRequest)
 			return

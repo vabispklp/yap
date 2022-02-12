@@ -18,8 +18,8 @@ type Server struct {
 	started bool
 }
 
-func NewServer(cfg config.ConfigExpected, shortener *shortener.Shortener) (*Server, error) {
-	server := http.Server{Addr: cfg.GetServerAddr()}
+func NewServer(cfg config.Сonfig, shortener *shortener.Shortener) (*Server, error) {
+	server := http.Server{Addr: cfg.ServerAddr}
 
 	router, err := initRouter(shortener)
 	if err != nil {
@@ -31,7 +31,7 @@ func NewServer(cfg config.ConfigExpected, shortener *shortener.Shortener) (*Serv
 	return &Server{server: &server}, nil
 }
 
-func (s *Server) Start(ctx context.Context) error {
+func (s *Server) Start() error {
 	go func() {
 		log.Print(s.server.ListenAndServe())
 	}()

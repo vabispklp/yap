@@ -37,10 +37,10 @@ func (m *MockShortenerExpected) EXPECT() *MockShortenerExpectedMockRecorder {
 }
 
 // AddManyRedirectLink mocks base method.
-func (m *MockShortenerExpected) AddManyRedirectLink(arg0 context.Context, arg1 []model.ShortenBatch, arg2 string) ([]model.ShortenBatchResult, error) {
+func (m *MockShortenerExpected) AddManyRedirectLink(arg0 context.Context, arg1 []model.ShortenBatchRequest, arg2 string) ([]model.ShortenBatchResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddManyRedirectLink", arg0, arg1, arg2)
-	ret0, _ := ret[0].([]model.ShortenBatchResult)
+	ret0, _ := ret[0].([]model.ShortenBatchResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -82,10 +82,10 @@ func (mr *MockShortenerExpectedMockRecorder) GetRedirectLink(arg0, arg1 interfac
 }
 
 // GetUserURLs mocks base method.
-func (m *MockShortenerExpected) GetUserURLs(arg0 context.Context, arg1 string) ([]model.Shorten, error) {
+func (m *MockShortenerExpected) GetUserURLs(arg0 context.Context, arg1 string) ([]model.ShortenItemResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserURLs", arg0, arg1)
-	ret0, _ := ret[0].([]model.Shorten)
+	ret0, _ := ret[0].([]model.ShortenItemResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
