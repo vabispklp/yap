@@ -13,5 +13,7 @@ type ShortenerExpected interface {
 	AddRedirectLink(ctx context.Context, stringURL, userID string) (string, error)
 	AddManyRedirectLink(ctx context.Context, shortenBatchItems []model.ShortenBatchRequest, userID string) ([]model.ShortenBatchResponse, error)
 
+	DeleteRedirectLinks(ctx context.Context, ids []string, userID string) error
+
 	Ping(ctx context.Context) error
 }

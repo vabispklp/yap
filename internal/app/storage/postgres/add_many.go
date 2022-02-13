@@ -2,11 +2,8 @@ package postgres
 
 import (
 	"context"
-	"database/sql"
 	"github.com/vabispklp/yap/internal/app/storage/model"
 )
-
-var insertStmt *sql.Stmt
 
 func (s *Storage) AddMany(ctx context.Context, shortURLs []model.ShortURL) error {
 	tx, err := s.db.Begin()

@@ -22,6 +22,9 @@ func (h *Handler) GetHandleGetURL() func(w http.ResponseWriter, r *http.Request)
 		if err != nil {
 			if errors.Is(err, shortener.ErrNotFound) {
 				http.NotFound(w, r)
+			} else if errors.Is(err, shortener.ErrDeleted) {
+				w.WriteHeader(http.StatusGone)
+				return
 			} else {
 				http.Error(w, errTextInternal, http.StatusInternalServerError)
 			}

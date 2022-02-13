@@ -15,4 +15,9 @@ type (
 		CorrelationID string `json:"correlation_id"`
 		ShortURL      string `json:"short_url"`
 	}
+
+	DeleteItemRequest struct {
+		ID     string
+		UserID string
+	}
 )

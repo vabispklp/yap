@@ -66,6 +66,20 @@ func (mr *MockShortenerExpectedMockRecorder) AddRedirectLink(arg0, arg1, arg2 in
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddRedirectLink", reflect.TypeOf((*MockShortenerExpected)(nil).AddRedirectLink), arg0, arg1, arg2)
 }
 
+// DeleteRedirectLinks mocks base method.
+func (m *MockShortenerExpected) DeleteRedirectLinks(arg0 context.Context, arg1 []string, arg2 string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteRedirectLinks", arg0, arg1, arg2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteRedirectLinks indicates an expected call of DeleteRedirectLinks.
+func (mr *MockShortenerExpectedMockRecorder) DeleteRedirectLinks(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteRedirectLinks", reflect.TypeOf((*MockShortenerExpected)(nil).DeleteRedirectLinks), arg0, arg1, arg2)
+}
+
 // GetRedirectLink mocks base method.
 func (m *MockShortenerExpected) GetRedirectLink(arg0 context.Context, arg1 string) (*model0.ShortURL, error) {
 	m.ctrl.T.Helper()

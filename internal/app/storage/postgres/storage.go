@@ -11,6 +11,7 @@ const initSQL = "CREATE TABLE IF NOT EXISTS short_url (" +
 	"id VARCHAR(100) NOT NULL," +
 	"user_id VARCHAR(32) NOT NULL," +
 	"original_url VARCHAR(100) NOT NULL," +
+	"deleted BOOLEAN NOT NULL DEFAULT FALSE," +
 	"PRIMARY KEY (id,user_id)" +
 	");"
 

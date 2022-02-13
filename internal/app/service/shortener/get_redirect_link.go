@@ -15,5 +15,9 @@ func (s *Shortener) GetRedirectLink(ctx context.Context, id string) (*model.Shor
 		return nil, ErrNotFound
 	}
 
+	if result.Deleted {
+		return nil, ErrDeleted
+	}
+
 	return result, nil
 }
