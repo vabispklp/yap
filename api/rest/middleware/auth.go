@@ -8,9 +8,11 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
-	"github.com/vabispklp/yap/internal/app/storage/model"
+	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/vabispklp/yap/internal/app/storage/model"
 )
 
 const (
@@ -36,11 +38,11 @@ func AuthHandle(next http.Handler) http.Handler {
 		}
 
 		var (
-			uid, id string
-			user    model.User
-			ok      bool
+			id string
+			ok bool
 		)
 
+		// NOTICE: если неправально понял, то накидывай еще
 		if value != "" {
 			id, ok, _ = checkUID(value)
 			if !ok {
@@ -48,34 +50,40 @@ func AuthHandle(next http.Handler) http.Handler {
 				return
 			}
 		} else {
-
-			id, err = generateRandomID()
+			id, err = signUp(w)
 			if err != nil {
-				log.Printf("generateRandomID error: %s", err)
+				log.Printf("signUp error: %s", err)
 				http.Error(w, errInternal, http.StatusInternalServerError)
 				return
 			}
-
-			user = model.User{
-				ID: id,
-			}
-			uid, err = getUIDByUser(user)
-			if err != nil {
-				log.Printf("getUIDByUser error: %s", err)
-				http.Error(w, errInternal, http.StatusInternalServerError)
-				return
-			}
-
-			http.SetCookie(w, &http.Cookie{
-				Name:  cookieNameUID,
-				Value: uid,
-			})
 		}
 
 		ctx := r.Context()
 
 		next.ServeHTTP(w, r.WithContext(context.WithValue(ctx, ContextKeyUserID, id)))
 	})
+}
+
+func signUp(w http.ResponseWriter) (string, error) {
+	id, err := generateRandomID()
+	if err != nil {
+		return "", fmt.Errorf("getUIDByUser error: %w", err)
+	}
+
+	user := model.User{
+		ID: id,
+	}
+	uid, err := getUIDByUser(user)
+	if err != nil {
+		return "", fmt.Errorf("getUIDByUser error: %w", err)
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:  cookieNameUID,
+		Value: uid,
+	})
+
+	return id, err
 }
 
 func getUIDByUser(user model.User) (string, error) {

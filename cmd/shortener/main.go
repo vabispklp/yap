@@ -2,17 +2,19 @@ package main
 
 import (
 	"context"
-	_ "github.com/lib/pq"
-	"github.com/vabispklp/yap/internal/app/service/shortener"
-	"github.com/vabispklp/yap/internal/app/storage/inmem"
-	"github.com/vabispklp/yap/internal/app/storage/ondisk"
-	"github.com/vabispklp/yap/internal/app/storage/postgres"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
 
+	_ "github.com/lib/pq"
+
 	"github.com/vabispklp/yap/api/rest"
+	"github.com/vabispklp/yap/internal/app/service/shortener"
+	"github.com/vabispklp/yap/internal/app/storage"
+	"github.com/vabispklp/yap/internal/app/storage/inmem"
+	"github.com/vabispklp/yap/internal/app/storage/ondisk"
+	"github.com/vabispklp/yap/internal/app/storage/postgres"
 	"github.com/vabispklp/yap/internal/config"
 )
 
@@ -23,33 +25,19 @@ func main() {
 	}
 	ctx := context.Background()
 
-	storageService, err := postgres.NewStorage(cfg.GetDatabaseDSN())
+	storageService, err := buildStorage(*cfg)
 	if err != nil {
-		log.Print(err)
-	}
-
-	if storageService == nil {
-		storageService, err = ondisk.NewStorage(cfg.GetFileStoragePath())
-		if err != nil {
-			log.Print(err)
-		}
-	}
-
-	if storageService == nil {
-		storageService = inmem.NewStorage()
-		if err != nil {
-			log.Print(err)
-		}
+		log.Fatal(err)
 	}
 
 	defer storageService.Close()
 
-	shortenerService, err := shortener.NewShortener(storageService, cfg.GetBaseURL())
+	shortenerService, err := shortener.NewShortener(storageService, cfg.BaseURL)
 	if err != nil {
 		log.Print(err)
 	}
 
-	server, err := rest.NewServer(cfg, shortenerService)
+	server, err := rest.NewServer(*cfg, shortenerService)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -63,11 +51,27 @@ func main() {
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
-	if err = server.Start(ctx); err != nil {
-		log.Println("ыerver Close error: " + err.Error())
+	if err = server.Start(); err != nil {
+		log.Fatalf("Server Close error: " + err.Error())
 	}
 	log.Print("Server Started")
 
 	<-done
 	log.Print("Graceful shutdown Started")
+}
+
+func buildStorage(cfg config.Сonfig) (storage.StorageExpected, error) {
+	var (
+		storageService storage.StorageExpected
+		err            error
+	)
+	if cfg.DatabaseDSN != "" {
+		storageService, err = postgres.NewStorage(cfg.DatabaseDSN)
+	} else if cfg.FileStoragePath != "" {
+		storageService, err = ondisk.NewStorage(cfg.FileStoragePath)
+	} else {
+		storageService = inmem.NewStorage()
+	}
+
+	return storageService, err
 }

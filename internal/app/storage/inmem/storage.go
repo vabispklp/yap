@@ -50,3 +50,7 @@ func (s *Storage) Close() error {
 func (s *Storage) Ping(_ context.Context) error {
 	return nil
 }
+
+func (s *Storage) Delete(_ context.Context, _ []string, _ string) error {
+	return nil
+}

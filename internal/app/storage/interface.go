@@ -11,6 +11,8 @@ type StorageExpected interface {
 	Add(ctx context.Context, shortURL model.ShortURL) error
 	AddMany(ctx context.Context, shortURLs []model.ShortURL) error
 
+	Delete(ctx context.Context, ids []string, userID string) error
+
 	Ping(ctx context.Context) error
 	Close() error
 }
