@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/go-chi/chi/v5"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	shortenerMock "github.com/vabispklp/yap/api/rest/handlers/mock"
@@ -10,6 +11,17 @@ import (
 	"strings"
 	"testing"
 )
+
+func ExampleGetHandleGetURL() {
+	// Создаем любой роутер
+	router := chi.NewRouter()
+
+	// Создаем струтуру хендлеров
+	h, _ := NewHandler(ShortenerExpected(nil))
+
+	// Получаем хендлер получения сокращеной ссылки
+	router.Get("/some_route/{id}", h.GetHandleGetURL())
+}
 
 func TestHandler_GetURL(t *testing.T) {
 	type getServiceResult struct {

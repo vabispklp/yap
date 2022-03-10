@@ -7,6 +7,7 @@ import (
 	"net/http"
 )
 
+// GetHandlerDelete отдает хендлер который занимается удалением ссылок
 func (h *Handler) GetHandlerDelete() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()

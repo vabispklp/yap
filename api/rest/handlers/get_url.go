@@ -8,6 +8,7 @@ import (
 	"github.com/vabispklp/yap/internal/app/service/shortener"
 )
 
+// GetHandleGetURL отдает хендлер который занимается получением оригинальных ссылок и редиректом на них
 func (h *Handler) GetHandleGetURL() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()

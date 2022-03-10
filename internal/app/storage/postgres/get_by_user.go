@@ -5,6 +5,7 @@ import (
 	"github.com/vabispklp/yap/internal/app/storage/model"
 )
 
+// GetByUser отдает все ссылки пользователей
 func (s *Storage) GetByUser(ctx context.Context, userID string) ([]model.ShortURL, error) {
 	var (
 		item model.ShortURL

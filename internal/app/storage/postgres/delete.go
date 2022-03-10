@@ -4,6 +4,7 @@ import (
 	"context"
 )
 
+// Delete удаляет сокращенные ссылки
 func (s *Storage) Delete(ctx context.Context, ids []string, userID string) error {
 	tx, err := s.db.Begin()
 	if err != nil {

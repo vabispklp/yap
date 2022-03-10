@@ -18,6 +18,7 @@ type Server struct {
 	started bool
 }
 
+// NewServer создает структуру для запуска http сервера
 func NewServer(cfg config.Сonfig, shortener *shortener.Shortener) (*Server, error) {
 	server := http.Server{Addr: cfg.ServerAddr}
 
@@ -31,6 +32,7 @@ func NewServer(cfg config.Сonfig, shortener *shortener.Shortener) (*Server, err
 	return &Server{server: &server}, nil
 }
 
+// Start запускает http сервер
 func (s *Server) Start() error {
 	go func() {
 		log.Print(s.server.ListenAndServe())
@@ -41,6 +43,7 @@ func (s *Server) Start() error {
 	return nil
 }
 
+// Close останавливает http сервер
 func (s *Server) Close(ctx context.Context) error {
 	if !s.started {
 		return nil

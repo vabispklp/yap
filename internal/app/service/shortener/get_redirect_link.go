@@ -5,6 +5,7 @@ import (
 	"github.com/vabispklp/yap/internal/app/storage/model"
 )
 
+// GetRedirectLink получает оригинальную ссылки из сокращенной
 func (s *Shortener) GetRedirectLink(ctx context.Context, id string) (*model.ShortURL, error) {
 	result, err := s.storage.Get(ctx, id)
 	if err != nil {

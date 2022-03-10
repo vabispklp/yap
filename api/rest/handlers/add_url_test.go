@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"github.com/go-chi/chi/v5"
 	"github.com/vabispklp/yap/api/rest/middleware"
 	"io/ioutil"
 	"net/http"
@@ -15,6 +16,17 @@ import (
 
 	shortenerMock "github.com/vabispklp/yap/api/rest/handlers/mock"
 )
+
+func ExampleGetHandlerAddURL() {
+	// Создаем любой роутер
+	router := chi.NewRouter()
+
+	// Создаем струтуру хендлеров
+	h, _ := NewHandler(ShortenerExpected(nil))
+
+	// Получаем хендлер сокращения ссылки
+	router.Post("/some_route", h.GetHandlerAddURL())
+}
 
 func TestHandler_AddURL(t *testing.T) {
 	type addServiceResult struct {

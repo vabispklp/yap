@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestStorage_GetRedirectLink(t *testing.T) {
+func TestStorage_Get(t *testing.T) {
 	var urlsMap = map[string]model.ShortURL{
 		"some_id": {
 			ID:          "some_id",
@@ -54,7 +54,7 @@ func TestStorage_GetRedirectLink(t *testing.T) {
 	}
 }
 
-func TestStorage_AddRedirectLink(t *testing.T) {
+func TestStorage_Add(t *testing.T) {
 	type fields struct {
 		urlsMap map[string]model.ShortURL
 	}

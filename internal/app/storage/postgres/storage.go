@@ -44,6 +44,7 @@ func NewStorage(dsn string) (storage.StorageExpected, error) {
 	}, nil
 }
 
+// Close закрывает соединение с хранилищем
 func (s *Storage) Close() error {
 	return s.db.Close()
 }

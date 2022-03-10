@@ -9,6 +9,7 @@ import (
 	"net/url"
 )
 
+// GetHandlerAddBatch отдает хендлер который занимается можественным добавлением сокращенных ссылок
 func (h *Handler) GetHandlerAddBatch() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()

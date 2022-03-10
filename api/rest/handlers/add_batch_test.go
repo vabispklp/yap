@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
-	"github.com/vabispklp/yap/api/rest/middleware"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -16,31 +15,34 @@ import (
 	"github.com/stretchr/testify/require"
 
 	shortenerMock "github.com/vabispklp/yap/api/rest/handlers/mock"
+	"github.com/vabispklp/yap/api/rest/middleware"
+	"github.com/vabispklp/yap/internal/app/service/model"
 )
 
-func ExampleGetHandlerAddShorten() {
+func ExampleGetHandlerAddBatch() {
 	// Создаем любой роутер
 	router := chi.NewRouter()
 
 	// Создаем струтуру хендлеров
 	h, _ := NewHandler(ShortenerExpected(nil))
 
-	// Получаем хендлер сокращения ссылки
-	router.Post("/some_route", h.GetHandlerAddShorten())
+	// Получаем хендлер множественного сокращения ссылок
+	router.Post("/some_route", h.GetHandlerAddBatch())
 }
 
-func TestHandler_AddShorten(t *testing.T) {
+func TestHandler_AddBatch(t *testing.T) {
 	type addServiceResult struct {
-		url string
-		err error
+		urls []model.ShortenBatchResponse
+		err  error
 	}
 	type args struct {
 		method  string
 		target  string
-		request AddShortenRequest
+		request []model.ShortenBatchRequest
 	}
 	type want struct {
 		statusCode int
+		response   string
 	}
 	var tests = []struct {
 		name             string
@@ -51,16 +53,26 @@ func TestHandler_AddShorten(t *testing.T) {
 		{
 			name: "успешное добавление короткой ссылки",
 			addStorageResult: addServiceResult{
-				url: "http://localhost:8080/short",
+				urls: []model.ShortenBatchResponse{
+					{
+						CorrelationID: "123",
+						ShortURL:      "http://localhost:8080/short_some",
+					},
+				},
 				err: nil,
 			},
 			args: args{
-				method:  http.MethodPost,
-				target:  "/",
-				request: AddShortenRequest{URL: "http://localhost:8080/some_id"},
+				method: http.MethodPost,
+				target: "/api/shorten/batch",
+				request: []model.ShortenBatchRequest{
+					{
+						CorrelationID: "123", OriginalURL: "http://localhost:8080/some",
+					},
+				},
 			},
 			want: want{
 				statusCode: http.StatusCreated,
+				response:   `[{"correlation_id":"123","short_url":"http://localhost:8080/short_some"}]`,
 			},
 		},
 	}
@@ -77,13 +89,13 @@ func TestHandler_AddShorten(t *testing.T) {
 			shortenerServiceMock := shortenerMock.NewMockShortenerExpected(ctrl)
 
 			shortenerServiceMock.EXPECT().
-				AddRedirectLink(gomock.Any(), gomock.Any(), gomock.Any()).
-				Return(tt.addStorageResult.url, tt.addStorageResult.err)
+				AddManyRedirectLink(gomock.Any(), gomock.Any(), gomock.Any()).
+				Return(tt.addStorageResult.urls, tt.addStorageResult.err)
 
 			h := Handler{service: shortenerServiceMock}
 			ctx := request.Context()
 
-			h.GetHandlerAddShorten()(w, request.WithContext(context.WithValue(ctx, middleware.ContextKeyUserID, "someUserID")))
+			h.GetHandlerAddBatch()(w, request.WithContext(context.WithValue(ctx, middleware.ContextKeyUserID, "someUserID")))
 
 			res := w.Result()
 			defer res.Body.Close()

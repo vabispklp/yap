@@ -5,6 +5,7 @@ import (
 	"github.com/vabispklp/yap/internal/app/service/model"
 )
 
+// GetUserURLs отдает все ссылки пользователя
 func (s *Shortener) GetUserURLs(ctx context.Context, userID string) ([]model.ShortenItemResponse, error) {
 	shortURLs, err := s.storage.GetByUser(ctx, userID)
 	if err != nil {

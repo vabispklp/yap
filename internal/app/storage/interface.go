@@ -5,6 +5,7 @@ import (
 	"github.com/vabispklp/yap/internal/app/storage/model"
 )
 
+// StorageExpected интерфейс хранилища
 type StorageExpected interface {
 	Get(ctx context.Context, id string) (*model.ShortURL, error)
 	GetByUser(ctx context.Context, userID string) ([]model.ShortURL, error)
