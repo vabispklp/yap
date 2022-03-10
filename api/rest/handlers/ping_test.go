@@ -1,17 +1,18 @@
 package handlers
 
 import (
-	"github.com/go-chi/chi/v5"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/go-chi/chi/v5"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	shortenerMock "github.com/vabispklp/yap/api/rest/handlers/mock"
 )
 
-func ExampleGetHandlerPing() {
+func ExampleHandler_GetHandlerPing() {
 	// Создаем любой роутер
 	router := chi.NewRouter()
 

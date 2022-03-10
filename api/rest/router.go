@@ -22,7 +22,7 @@ func initRouter(shortener *shortener.Shortener) (*chi.Mux, error) {
 	router.Get("/{id}", h.GetHandleGetURL())
 	router.Post("/", h.GetHandlerAddURL())
 	router.Post("/api/shorten", h.GetHandlerAddShorten())
-	router.Get("/user/urls", h.GetHandleGetUserURLs())
+	router.Get("/api/user/urls", h.GetHandleGetUserURLs())
 	router.Get("/ping", h.GetHandlerPing())
 	router.Post("/api/shorten/batch", h.GetHandlerAddBatch())
 	router.Delete("/api/user/urls", h.GetHandlerDelete())

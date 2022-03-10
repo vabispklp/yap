@@ -3,13 +3,14 @@ package handlers
 import (
 	"context"
 	"encoding/json"
-	"github.com/go-chi/chi/v5"
-	"github.com/vabispklp/yap/api/rest/middleware"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/vabispklp/yap/api/rest/middleware"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -18,7 +19,7 @@ import (
 	shortenerMock "github.com/vabispklp/yap/api/rest/handlers/mock"
 )
 
-func ExampleGetHandlerAddShorten() {
+func ExampleHandler_GetHandlerAddShorten() {
 	// Создаем любой роутер
 	router := chi.NewRouter()
 

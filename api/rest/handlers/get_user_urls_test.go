@@ -2,11 +2,12 @@ package handlers
 
 import (
 	"context"
-	"github.com/go-chi/chi/v5"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/go-chi/chi/v5"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -17,7 +18,7 @@ import (
 	"github.com/vabispklp/yap/internal/app/service/model"
 )
 
-func ExampleGetHandleGetUserURLs() {
+func ExampleHandler_GetHandleGetUserURLs() {
 	// Создаем любой роутер
 	router := chi.NewRouter()
 

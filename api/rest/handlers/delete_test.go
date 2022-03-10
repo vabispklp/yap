@@ -3,11 +3,12 @@ package handlers
 import (
 	"context"
 	"encoding/json"
-	"github.com/go-chi/chi/v5"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/go-chi/chi/v5"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -15,7 +16,7 @@ import (
 	"github.com/vabispklp/yap/api/rest/middleware"
 )
 
-func ExampleGetHandlerDelete() {
+func ExampleHandler_GetHandlerDelete() {
 	// Создаем любой роутер
 	router := chi.NewRouter()
 

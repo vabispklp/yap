@@ -1,18 +1,19 @@
 package handlers
 
 import (
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	shortenerMock "github.com/vabispklp/yap/api/rest/handlers/mock"
 	"github.com/vabispklp/yap/internal/app/storage/model"
-	"net/http"
-	"net/http/httptest"
-	"strings"
-	"testing"
 )
 
-func ExampleGetHandleGetURL() {
+func ExampleHandler_GetHandleGetURL() {
 	// Создаем любой роутер
 	router := chi.NewRouter()
 
