@@ -2,6 +2,8 @@ package rest
 
 import (
 	"github.com/go-chi/chi/v5"
+	chiMiddleware "github.com/go-chi/chi/v5/middleware"
+
 	"github.com/vabispklp/yap/api/rest/handlers"
 	"github.com/vabispklp/yap/api/rest/middleware"
 	"github.com/vabispklp/yap/internal/app/service/shortener"
@@ -10,6 +12,7 @@ import (
 func initRouter(shortener *shortener.Shortener) (*chi.Mux, error) {
 	router := chi.NewRouter()
 	router.Use(middleware.GzipHandle, middleware.AuthHandle)
+	router.Mount("/debug", chiMiddleware.Profiler())
 
 	h, err := handlers.NewHandler(shortener)
 	if err != nil {
