@@ -2,12 +2,13 @@ package shortener
 
 import (
 	"context"
-	"github.com/vabispklp/yap/internal/app/service/model"
 	"testing"
 
+	dataFaker "github.com/brianvoe/gofakeit/v6"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/vabispklp/yap/internal/app/service/model"
 	storageMock "github.com/vabispklp/yap/internal/app/storage/mock"
 )
 
@@ -58,4 +59,32 @@ func TestShortener_AddManyRedirectLink(t *testing.T) {
 			assert.Equal(t, tt.expectedErr, err, "Unexpected error")
 		})
 	}
+}
+
+func BenchmarkAddManyRedirectLink(b *testing.B) {
+	ctrl := gomock.NewController(b)
+	defer ctrl.Finish()
+
+	inputURLs := make([]model.ShortenBatchRequest, 100)
+	for i := 0; i < 100; i++ {
+		inputURLs[i] = model.ShortenBatchRequest{
+			CorrelationID: dataFaker.Word(),
+			OriginalURL:   dataFaker.URL(),
+		}
+	}
+
+	storageMock := storageMock.NewMockStorageExpected(ctrl)
+	storageMock.EXPECT().
+		AddMany(gomock.Any(), gomock.Any()).
+		Return(nil)
+
+	s := &Shortener{
+		storage: storageMock,
+	}
+
+	b.ResetTimer() // сбрасываем счётчик
+	result, err := s.AddManyRedirectLink(context.Background(), inputURLs, "some_user_id")
+
+	assert.NotNil(b, result, "Unexpected result")
+	assert.Nil(b, err, "Unexpected error")
 }

@@ -2,8 +2,10 @@ package shortener
 
 import (
 	"context"
-	"github.com/vabispklp/yap/internal/app/storage/model"
 	"testing"
+
+	dataFaker "github.com/brianvoe/gofakeit/v6"
+	"github.com/vabispklp/yap/internal/app/storage/model"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -69,4 +71,41 @@ func TestShortener_DeleteRedirectLink(t *testing.T) {
 			assert.Equal(t, tt.expectedErr, err, "Unexpected error")
 		})
 	}
+}
+
+func BenchmarkDeleteRedirectLink(b *testing.B) {
+	ctrl := gomock.NewController(b)
+	defer ctrl.Finish()
+
+	storageMock := storageMock.NewMockStorageExpected(ctrl)
+	inputIDs := make([]string, 100)
+	getStorageResults := make([]*model.ShortURL, 100)
+	for i := 0; i < 100; i++ {
+		id := dataFaker.Word()
+		getStorageResult := &model.ShortURL{
+			ID:          "id",
+			OriginalURL: dataFaker.URL(),
+		}
+
+		storageMock.EXPECT().
+			Get(gomock.Any(), gomock.Any()).
+			Return(getStorageResult, nil)
+
+		inputIDs[i] = id
+		getStorageResults[i] = getStorageResult
+
+	}
+
+	storageMock.EXPECT().
+		Delete(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return(nil)
+
+	s := &Shortener{
+		storage: storageMock,
+	}
+
+	b.ResetTimer() // сбрасываем счётчик
+	err := s.DeleteRedirectLinks(context.Background(), inputIDs, "some_user_id")
+
+	assert.Nil(b, err, "Unexpected error")
 }
