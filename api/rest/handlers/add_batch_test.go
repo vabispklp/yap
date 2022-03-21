@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -9,38 +10,40 @@ import (
 	"testing"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/vabispklp/yap/api/rest/middleware"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	shortenerMock "github.com/vabispklp/yap/api/rest/handlers/mock"
+	"github.com/vabispklp/yap/api/rest/middleware"
+	"github.com/vabispklp/yap/internal/app/service/model"
 )
 
-func ExampleHandler_GetHandlerAddURL() {
+func ExampleHandler_GetHandlerAddBatch() {
 	// Создаем любой роутер
 	router := chi.NewRouter()
 
 	// Создаем струтуру хендлеров
 	h, _ := NewHandler(ShortenerExpected(nil))
 
-	// Получаем хендлер сокращения ссылки
-	router.Post("/some_route", h.GetHandlerAddURL())
+	// Получаем хендлер множественного сокращения ссылок
+	router.Post("/some_route", h.GetHandlerAddBatch())
 }
 
-func TestHandler_AddURL(t *testing.T) {
+func TestHandler_AddBatch(t *testing.T) {
 	type addServiceResult struct {
-		url string
-		err error
+		urls []model.ShortenBatchResponse
+		err  error
 	}
 	type args struct {
-		method string
-		id     string
-		url    string
+		method  string
+		target  string
+		request []model.ShortenBatchRequest
 	}
 	type want struct {
 		statusCode int
+		response   string
 	}
 	var tests = []struct {
 		name             string
@@ -51,16 +54,26 @@ func TestHandler_AddURL(t *testing.T) {
 		{
 			name: "успешное добавление короткой ссылки",
 			addStorageResult: addServiceResult{
-				url: "http://localhost:8080/short",
+				urls: []model.ShortenBatchResponse{
+					{
+						CorrelationID: "123",
+						ShortURL:      "http://localhost:8080/short_some",
+					},
+				},
 				err: nil,
 			},
 			args: args{
 				method: http.MethodPost,
-				id:     "/",
-				url:    "http://localhost:8080/some_id",
+				target: "/api/shorten/batch",
+				request: []model.ShortenBatchRequest{
+					{
+						CorrelationID: "123", OriginalURL: "http://localhost:8080/some",
+					},
+				},
 			},
 			want: want{
 				statusCode: http.StatusCreated,
+				response:   `[{"correlation_id":"123","short_url":"http://localhost:8080/short_some"}]`,
 			},
 		},
 	}
@@ -68,27 +81,28 @@ func TestHandler_AddURL(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
-			request := httptest.NewRequest(tt.args.method, tt.args.id, strings.NewReader(tt.args.url))
+
+			requestBody, _ := json.Marshal(tt.args.request)
+			request := httptest.NewRequest(tt.args.method, tt.args.target, strings.NewReader(string(requestBody)))
 
 			w := httptest.NewRecorder()
 
 			shortenerServiceMock := shortenerMock.NewMockShortenerExpected(ctrl)
 
 			shortenerServiceMock.EXPECT().
-				AddRedirectLink(gomock.Any(), gomock.Any(), gomock.Any()).
-				Return(tt.addStorageResult.url, tt.addStorageResult.err)
+				AddManyRedirectLink(gomock.Any(), gomock.Any(), gomock.Any()).
+				Return(tt.addStorageResult.urls, tt.addStorageResult.err)
 
 			h := Handler{service: shortenerServiceMock}
-
 			ctx := request.Context()
 
-			h.GetHandlerAddURL()(w, request.WithContext(context.WithValue(ctx, middleware.ContextKeyUserID, "someUserID")))
+			h.GetHandlerAddBatch()(w, request.WithContext(context.WithValue(ctx, middleware.ContextKeyUserID, "someUserID")))
 
 			res := w.Result()
 			defer res.Body.Close()
 			result, err := ioutil.ReadAll(res.Body)
 
-			require.Nil(t, err, "decode error not nil")
+			require.NoError(t, err, "decode has error")
 			assert.Equal(t, res.StatusCode, tt.want.statusCode, "Unexpected status code")
 			assert.NotEqual(t, string(result), "", "Unexpected result")
 		})

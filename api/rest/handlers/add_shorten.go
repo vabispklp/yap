@@ -10,14 +10,17 @@ import (
 	"net/url"
 )
 
+// AddShortenRequest структура тела запроса сокращения ссылки
 type AddShortenRequest struct {
 	URL string `json:"url"`
 }
 
+// AddShortenResponse структура ответа сокращения ссылки
 type AddShortenResponse struct {
 	Result string `json:"result"`
 }
 
+// GetHandlerAddShorten отдает хендлер который сокращает ссылку
 func (h *Handler) GetHandlerAddShorten() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()

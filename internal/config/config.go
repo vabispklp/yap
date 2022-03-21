@@ -7,11 +7,13 @@ import (
 	"github.com/caarlos0/env/v6"
 )
 
+// Сonfig с environments
 type Сonfig struct {
 	ServerAddr      string  `env:"SERVER_ADDRESS"`
 	BaseURL         url.URL `env:"BASE_URL"`
 	FileStoragePath string  `env:"FILE_STORAGE_PATH"`
 	DatabaseDSN     string  `env:"DATABASE_DSN"`
+	PprofAddr       string  `env:"PPROF_ADDRESS" envDefault:":8084"`
 }
 
 var flagConfig struct {
@@ -29,6 +31,7 @@ func init() {
 	flag.Parse()
 }
 
+// GetConfig возвращает проинициализованный Сonfig
 func GetConfig() (*Сonfig, error) {
 	var cfg Сonfig
 

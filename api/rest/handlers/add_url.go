@@ -9,6 +9,7 @@ import (
 	"net/url"
 )
 
+// GetHandlerAddURL отдает хендлер который сокращает ссылки
 func (h *Handler) GetHandlerAddURL() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()

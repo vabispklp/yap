@@ -3,65 +3,61 @@ package handlers
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/vabispklp/yap/api/rest/middleware"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-
 	shortenerMock "github.com/vabispklp/yap/api/rest/handlers/mock"
+	"github.com/vabispklp/yap/api/rest/middleware"
 )
 
-func ExampleHandler_GetHandlerAddShorten() {
+func ExampleHandler_GetHandlerDelete() {
 	// Создаем любой роутер
 	router := chi.NewRouter()
 
 	// Создаем струтуру хендлеров
 	h, _ := NewHandler(ShortenerExpected(nil))
 
-	// Получаем хендлер сокращения ссылки
-	router.Post("/some_route", h.GetHandlerAddShorten())
+	// Получаем хендлер удаления ссылки
+	router.Delete("/some_route", h.GetHandlerDelete())
 }
 
-func TestHandler_AddShorten(t *testing.T) {
-	type addServiceResult struct {
-		url string
+func TestHandler_Delete(t *testing.T) {
+	type deleteResult struct {
 		err error
 	}
 	type args struct {
 		method  string
 		target  string
-		request AddShortenRequest
+		request []string
 	}
 	type want struct {
 		statusCode int
 	}
 	var tests = []struct {
-		name             string
-		addStorageResult addServiceResult
-		args             args
-		want             want
+		name         string
+		deleteResult deleteResult
+		args         args
+		want         want
 	}{
 		{
-			name: "успешное добавление короткой ссылки",
-			addStorageResult: addServiceResult{
-				url: "http://localhost:8080/short",
+			name: "успешное удаление короткой ссылки",
+			deleteResult: deleteResult{
 				err: nil,
 			},
 			args: args{
-				method:  http.MethodPost,
-				target:  "/",
-				request: AddShortenRequest{URL: "http://localhost:8080/some_id"},
+				method:  http.MethodDelete,
+				target:  "/api/user/urls",
+				request: []string{"123"},
 			},
+
 			want: want{
-				statusCode: http.StatusCreated,
+				statusCode: http.StatusAccepted,
 			},
 		},
 	}
@@ -78,21 +74,18 @@ func TestHandler_AddShorten(t *testing.T) {
 			shortenerServiceMock := shortenerMock.NewMockShortenerExpected(ctrl)
 
 			shortenerServiceMock.EXPECT().
-				AddRedirectLink(gomock.Any(), gomock.Any(), gomock.Any()).
-				Return(tt.addStorageResult.url, tt.addStorageResult.err)
+				DeleteRedirectLinks(gomock.Any(), gomock.Any(), gomock.Any()).
+				Return(tt.deleteResult.err)
 
 			h := Handler{service: shortenerServiceMock}
 			ctx := request.Context()
 
-			h.GetHandlerAddShorten()(w, request.WithContext(context.WithValue(ctx, middleware.ContextKeyUserID, "someUserID")))
+			h.GetHandlerDelete()(w, request.WithContext(context.WithValue(ctx, middleware.ContextKeyUserID, "someUserID")))
 
 			res := w.Result()
 			defer res.Body.Close()
-			result, err := ioutil.ReadAll(res.Body)
 
-			require.NoError(t, err, "decode has error")
 			assert.Equal(t, res.StatusCode, tt.want.statusCode, "Unexpected status code")
-			assert.NotEqual(t, string(result), "", "Unexpected result")
 		})
 	}
 }

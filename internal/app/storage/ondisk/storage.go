@@ -10,6 +10,7 @@ import (
 	"sync"
 )
 
+// Storage хранилище реализованное на диске
 type Storage struct {
 	sync.Mutex
 	filePath string
@@ -20,6 +21,7 @@ type Storage struct {
 	encoder *json.Encoder
 }
 
+// NewStorage создает Storage
 func NewStorage(filePath string) (storage.StorageExpected, error) {
 	writeFile, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0777)
 	if err != nil {
@@ -39,10 +41,12 @@ func NewStorage(filePath string) (storage.StorageExpected, error) {
 	}, nil
 }
 
+// Get отдает сокращенную ссылку
 func (s *Storage) Get(_ context.Context, id string) (*model.ShortURL, error) {
 	return s.getByID(id)
 }
 
+// Add добавленяет сокращенную ссылки
 func (s *Storage) Add(_ context.Context, shortURL model.ShortURL) error {
 	savedURL, err := s.getByID(shortURL.ID)
 	if err != nil {
@@ -55,6 +59,7 @@ func (s *Storage) Add(_ context.Context, shortURL model.ShortURL) error {
 	return s.encoder.Encode(shortURL)
 }
 
+// GetByUser отдает все ссылки пользователей
 func (s *Storage) GetByUser(_ context.Context, userID string) ([]model.ShortURL, error) {
 	var (
 		item model.ShortURL
@@ -111,10 +116,12 @@ func (s *Storage) getByID(id string) (*model.ShortURL, error) {
 	return result, nil
 }
 
+// AddMany добавляет несколько ссылок одновременно
 func (s *Storage) AddMany(_ context.Context, _ []model.ShortURL) error {
 	return nil
 }
 
+// Close закрывает соединение с хранилищем
 func (s *Storage) Close() error {
 	err := s.readFile.Close()
 	if err != nil {
@@ -124,10 +131,12 @@ func (s *Storage) Close() error {
 	return s.writeFile.Close()
 }
 
+// Ping пингует хранилище
 func (s *Storage) Ping(_ context.Context) error {
 	return nil
 }
 
+// Delete удаляет сокращенные ссылки
 func (s *Storage) Delete(_ context.Context, _ []string, _ string) error {
 	return nil
 }

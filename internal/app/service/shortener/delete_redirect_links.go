@@ -8,6 +8,7 @@ import (
 
 const workersCount = 10
 
+// DeleteRedirectLinks удаляет сокращенные ссылки из сервиса
 func (s *Shortener) DeleteRedirectLinks(_ context.Context, ids []string, userID string) error {
 	inputCh := make(chan string)
 

@@ -6,6 +6,7 @@ import (
 	"net/http"
 )
 
+// GetHandleGetUserURLs отдает хендлер который отдает все ссылки пользователя
 func (h *Handler) GetHandleGetUserURLs() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()

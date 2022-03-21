@@ -5,6 +5,7 @@ import (
 	"github.com/vabispklp/yap/internal/app/storage/model"
 )
 
+// AddMany добавляет несколько ссылок одновременно
 func (s *Storage) AddMany(ctx context.Context, shortURLs []model.ShortURL) error {
 	tx, err := s.db.Begin()
 	if err != nil {

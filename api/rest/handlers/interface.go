@@ -7,6 +7,7 @@ import (
 	storageModel "github.com/vabispklp/yap/internal/app/storage/model"
 )
 
+// ShortenerExpected интерфейс необходимый для работы хендлеров
 type ShortenerExpected interface {
 	GetRedirectLink(ctx context.Context, id string) (*storageModel.ShortURL, error)
 	GetUserURLs(ctx context.Context, userID string) ([]model.ShortenItemResponse, error)

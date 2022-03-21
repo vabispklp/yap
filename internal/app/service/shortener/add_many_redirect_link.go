@@ -9,6 +9,7 @@ import (
 	storageModel "github.com/vabispklp/yap/internal/app/storage/model"
 )
 
+// AddManyRedirectLink выолняет множественное сокращение ссылок и сохранение в хранилище
 func (s *Shortener) AddManyRedirectLink(ctx context.Context, shortenBatchItems []model.ShortenBatchRequest, userID string) ([]model.ShortenBatchResponse, error) {
 	shortURLs := make([]storageModel.ShortURL, 0, len(shortenBatchItems))
 	result := make([]model.ShortenBatchResponse, 0, len(shortenBatchItems))

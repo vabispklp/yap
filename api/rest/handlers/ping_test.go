@@ -3,61 +3,55 @@ package handlers
 import (
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 
 	"github.com/go-chi/chi/v5"
+
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	shortenerMock "github.com/vabispklp/yap/api/rest/handlers/mock"
-	"github.com/vabispklp/yap/internal/app/storage/model"
 )
 
-func ExampleHandler_GetHandleGetURL() {
+func ExampleHandler_GetHandlerPing() {
 	// Создаем любой роутер
 	router := chi.NewRouter()
 
 	// Создаем струтуру хендлеров
 	h, _ := NewHandler(ShortenerExpected(nil))
 
-	// Получаем хендлер получения сокращеной ссылки
-	router.Get("/some_route/{id}", h.GetHandleGetURL())
+	// Получаем хендлер для пинга
+	router.Post("/some_route", h.GetHandlerPing())
 }
 
-func TestHandler_GetURL(t *testing.T) {
-	type getServiceResult struct {
-		shortURL *model.ShortURL
-		err      error
+func TestHandler_Ping(t *testing.T) {
+	type pingResult struct {
+		err error
 	}
 	type args struct {
 		method string
-		id     string
-		url    string
+		target string
 	}
 	type want struct {
 		statusCode int
 	}
 	var tests = []struct {
-		name             string
-		getServiceResult getServiceResult
-		args             args
-		want             want
+		name       string
+		pingResult pingResult
+		args       args
+		want       want
 	}{
 		{
-			name: "успешный редирект по короткой ссылке",
-			getServiceResult: getServiceResult{
-				shortURL: &model.ShortURL{
-					ID:          "some_id",
-					OriginalURL: "https://google.com",
-				},
+			name: "успешный пинг",
+			pingResult: pingResult{
 				err: nil,
 			},
 			args: args{
 				method: http.MethodGet,
-				id:     "/some_id",
+				target: "/ping",
 			},
+
 			want: want{
-				statusCode: http.StatusTemporaryRedirect,
+				statusCode: http.StatusOK,
 			},
 		},
 	}
@@ -66,19 +60,19 @@ func TestHandler_GetURL(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			request := httptest.NewRequest(tt.args.method, tt.args.id, strings.NewReader(tt.args.url))
+			request := httptest.NewRequest(tt.args.method, tt.args.target, nil)
 
 			w := httptest.NewRecorder()
 
 			shortenerServiceMock := shortenerMock.NewMockShortenerExpected(ctrl)
 
 			shortenerServiceMock.EXPECT().
-				GetRedirectLink(gomock.Any(), gomock.Any()).
-				Return(tt.getServiceResult.shortURL, tt.getServiceResult.err)
+				Ping(gomock.Any()).
+				Return(tt.pingResult.err)
 
 			h := Handler{service: shortenerServiceMock}
 
-			h.GetHandleGetURL()(w, request)
+			h.GetHandlerPing()(w, request)
 
 			res := w.Result()
 			defer res.Body.Close()

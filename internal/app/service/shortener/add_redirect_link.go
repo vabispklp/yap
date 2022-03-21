@@ -7,6 +7,7 @@ import (
 	"github.com/vabispklp/yap/internal/app/storage/model"
 )
 
+// AddRedirectLink выолняет сокращение ссылки и сохранение в хранилище
 func (s *Shortener) AddRedirectLink(ctx context.Context, stringURL, userID string) (string, error) {
 	hash := md5.Sum([]byte(stringURL))
 	id := hex.EncodeToString(hash[:])
